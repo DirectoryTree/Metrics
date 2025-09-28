@@ -1,0 +1,25 @@
+{
+    "name": "directorytree/metrics",
+    "description": "Record metrics in your Laravel application",
+    "type": "library",
+    "require": {
+        "illuminate/support": "^12.31",
+        "illuminate/database": "^12.31"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.6",
+        "laravel/pint": "^1.25"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Directorytree\\Metrics\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Steve Bauman",
+            "email": "steven_bauman@outlook.com"
+        }
+    ]
+}
