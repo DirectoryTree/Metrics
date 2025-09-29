@@ -2,6 +2,9 @@
 
 namespace DirectoryTree\Metrics;
 
+use DirectoryTree\Metrics\Jobs\CommitMetrics;
+use DirectoryTree\Metrics\Jobs\RecordMetric;
+
 class MetricManager
 {
     protected bool $capturing = false;
@@ -16,14 +19,14 @@ class MetricManager
     /**
      * Record a metric.
      */
-    public function record(Measurable $metric): ?self
+    public function record(Measurable $metric): ?Metric
     {
         if ($this->capturing) {
             $this->repository->add($metric);
         } elseif (config('metrics.queue')) {
             RecordMetric::dispatch($metric);
         } else {
-            return RecordMetric::dispatchSync($metric);
+            return (new RecordMetric($metric))->handle();
         }
 
         return null;
@@ -43,7 +46,7 @@ class MetricManager
         if ($queue = config('metrics.queue')) {
             CommitMetrics::dispatch($metrics, $queue);
         } else {
-            CommitMetrics::dispatchSync($metrics, $queue);
+            (new CommitMetrics($metrics, $queue))->handle();
         }
 
         $this->repository->flush();

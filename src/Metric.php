@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Metric extends Model
 {
     /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
+
+    /**
      * The attributes that should be cast.
      */
     protected function casts(): array

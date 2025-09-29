@@ -1,7 +1,9 @@
 <?php
 
-namespace DirectoryTree\Metrics;
+namespace DirectoryTree\Metrics\Facades;
 
+use DirectoryTree\Metrics\Measurable;
+use DirectoryTree\Metrics\MetricManager;
 use Illuminate\Support\Facades\Facade;
 
 /**

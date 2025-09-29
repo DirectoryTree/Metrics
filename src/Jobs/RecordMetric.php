@@ -1,12 +1,16 @@
 <?php
 
-namespace DirectoryTree\Metrics;
+namespace DirectoryTree\Metrics\Jobs;
 
+use DirectoryTree\Metrics\Measurable;
+use DirectoryTree\Metrics\Metric;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 
 class RecordMetric implements ShouldQueue
 {
+    use Dispatchable;
     use Queueable;
 
     /**
@@ -32,7 +36,7 @@ class RecordMetric implements ShouldQueue
 
         $metric->fill([
             'metadata' => [
-                ...$metric->metadata,
+                ...($metric->metadata ?? []),
                 ...$this->metric->metadata(),
             ],
         ])->increment('value', $this->metric->value());

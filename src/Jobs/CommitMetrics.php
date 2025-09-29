@@ -1,12 +1,14 @@
 <?php
 
-namespace DirectoryTree\Metrics;
+namespace DirectoryTree\Metrics\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 
 class CommitMetrics implements ShouldQueue
 {
+    use Dispatchable;
     use Queueable;
 
     /**
@@ -26,7 +28,7 @@ class CommitMetrics implements ShouldQueue
             if ($this->shouldQueue) {
                 RecordMetric::dispatch($metric);
             } else {
-                RecordMetric::dispatchSync($metric);
+                (new RecordMetric($metric))->handle();
             }
         }
     }
