@@ -45,6 +45,8 @@ class MetricManager
         } else {
             CommitMetrics::dispatchSync($metrics, $queue);
         }
+
+        $this->repository->flush();
     }
 
     /**

@@ -8,12 +8,23 @@
     },
     "require-dev": {
         "orchestra/testbench": "^10.6",
-        "laravel/pint": "^1.25"
+        "laravel/pint": "^1.25",
+        "pestphp/pest": "^3.8"
     },
     "license": "MIT",
+    "archive": {
+        "exclude": [
+            "/tests"
+        ]
+    },
     "autoload": {
         "psr-4": {
-            "Directorytree\\Metrics\\": "src/"
+            "DirectoryTree\\Metrics\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DirectoryTree\\Metrics\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -21,5 +32,10 @@
             "name": "Steve Bauman",
             "email": "steven_bauman@outlook.com"
         }
-    ]
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }
