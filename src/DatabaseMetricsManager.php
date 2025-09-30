@@ -5,8 +5,11 @@ namespace DirectoryTree\Metrics;
 use DirectoryTree\Metrics\Jobs\CommitMetrics;
 use DirectoryTree\Metrics\Jobs\RecordMetric;
 
-class MetricManager
+class DatabaseMetricsManager implements MetricsManager
 {
+    /**
+     * Whether metrics are being captured.
+     */
     protected bool $capturing = false;
 
     /**
@@ -17,7 +20,7 @@ class MetricManager
     ) {}
 
     /**
-     * Record a metric.
+     * {@inheritDoc}
      */
     public function record(Measurable $metric): ?Metric
     {
@@ -33,7 +36,7 @@ class MetricManager
     }
 
     /**
-     * Commit all metrics to the database.
+     * {@inheritDoc}
      */
     public function commit(): void
     {
@@ -53,7 +56,7 @@ class MetricManager
     }
 
     /**
-     * Start capturing metrics.
+     * {@inheritDoc}
      */
     public function capture(): void
     {
@@ -61,7 +64,7 @@ class MetricManager
     }
 
     /**
-     * Determine if metrics are being captured.
+     * {@inheritDoc}
      */
     public function isCapturing(): bool
     {
@@ -69,7 +72,7 @@ class MetricManager
     }
 
     /**
-     * Stop capturing metrics.
+     * {@inheritDoc}
      */
     public function stopCapturing(): void
     {
