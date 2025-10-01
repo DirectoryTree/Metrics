@@ -7,6 +7,7 @@ use DirectoryTree\Metrics\Metric;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Collection;
 
 class RecordMetric implements ShouldQueue
 {
@@ -17,30 +18,45 @@ class RecordMetric implements ShouldQueue
      * Constructor.
      */
     public function __construct(
-        public Measurable $metric,
+        public Collection|Measurable $metrics,
     ) {}
 
     /**
      * Record the metric.
      */
-    public function handle(): Metric
+    public function handle(): ?Metric
     {
-        $metric = Metric::query()->firstOrCreate([
-            'name' => $this->metric->name(),
-            'day' => $this->metric->day(),
-            'month' => $this->metric->month(),
-            'year' => $this->metric->year(),
-            'measurable_type' => $this->metric->measurable()?->getMorphClass(),
-            'measurable_id' => $this->metric->measurable()?->getKey(),
+        $metrics = Collection::make(
+            $this->metrics instanceof Collection
+                ? $this->metrics
+                : [$this->metrics]
+        );
+
+        /** @var Measurable $metric */
+        if (! $metric = $metrics->first()) {
+            return null;
+        }
+
+        $value = $metrics->sum(
+            fn (Measurable $metric) => $metric->value()
+        );
+
+        $model = Metric::query()->firstOrCreate([
+            'name' => $metric->name(),
+            'day' => $metric->day(),
+            'month' => $metric->month(),
+            'year' => $metric->year(),
+            'measurable_type' => $metric->measurable()?->getMorphClass(),
+            'measurable_id' => $metric->measurable()?->getKey(),
         ], ['value' => 0]);
 
-        $metric->fill([
+        $model->fill([
             'metadata' => [
-                ...($metric->metadata ?? []),
-                ...$this->metric->metadata(),
+                ...($model->metadata ?? []),
+                ...$metric->metadata(),
             ],
-        ])->increment('value', $this->metric->value());
+        ])->increment('value', $value);
 
-        return $metric;
+        return $model;
     }
 }

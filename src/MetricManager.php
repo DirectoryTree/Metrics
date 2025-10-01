@@ -2,7 +2,7 @@
 
 namespace DirectoryTree\Metrics;
 
-interface MetricsManager
+interface MetricManager
 {
     /**
      * Record a metric.

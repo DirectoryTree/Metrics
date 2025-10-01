@@ -2,6 +2,7 @@
 
 namespace DirectoryTree\Metrics;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class MetricServiceProvider extends ServiceProvider
@@ -11,7 +12,16 @@ class MetricServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->scoped(MetricRepository::class);
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/metrics.php', 'metrics'
+        );
+
+        $this->app->singleton(MetricManager::class, DatabaseMetricManager::class);
+        $this->app->singleton(MetricRepository::class, ArrayMetricRepository::class);
+
+        $this->app->terminating(function (Application $app) {
+            $app->make(MetricManager::class)->commit();
+        });
     }
 
     /**
@@ -19,8 +29,8 @@ class MetricServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__.'/../database/migrations/2025_09_28_131354_create_metrics_table.php' => database_path('migrations/2025_09_28_131354_create_metrics_table.php'),
+        $this->publishesMigrations([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'metrics-migrations');
     }
 }

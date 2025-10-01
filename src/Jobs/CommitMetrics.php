@@ -2,9 +2,11 @@
 
 namespace DirectoryTree\Metrics\Jobs;
 
+use DirectoryTree\Metrics\MetricData;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Collection;
 
 class CommitMetrics implements ShouldQueue
 {
@@ -24,12 +26,24 @@ class CommitMetrics implements ShouldQueue
      */
     public function handle(): void
     {
-        foreach ($this->metrics as $metric) {
-            if ($this->shouldQueue) {
-                RecordMetric::dispatch($metric);
-            } else {
-                (new RecordMetric($metric))->handle();
-            }
-        }
+        Collection::make($this->metrics)
+            ->groupBy(function (MetricData $data) {
+                return implode(array_filter([
+                    $data->name(),
+                    $data->category(),
+                    $data->year(),
+                    $data->month(),
+                    $data->day(),
+                    $data->measurable()?->getKey() ?? null,
+                    $data->measurable()?->getMorphClass() ?? null,
+                ]));
+            })
+            ->each(function (Collection $metrics) {
+                if ($this->shouldQueue) {
+                    RecordMetric::dispatch($metrics);
+                } else {
+                    (new RecordMetric($metrics))->handle();
+                }
+            });
     }
 }

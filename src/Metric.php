@@ -26,12 +26,4 @@ class Metric extends Model
             'metadata' => 'array',
         ];
     }
-
-    /**
-     * Create a new Eloquent query builder for the model.
-     */
-    public function newEloquentBuilder($query): MetricBuilder
-    {
-        return new MetricBuilder($query);
-    }
 }

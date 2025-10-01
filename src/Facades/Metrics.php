@@ -2,8 +2,8 @@
 
 namespace DirectoryTree\Metrics\Facades;
 
-use DirectoryTree\Metrics\DatabaseMetricsManager;
 use DirectoryTree\Metrics\Measurable;
+use DirectoryTree\Metrics\MetricManager;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -20,6 +20,6 @@ class Metrics extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return DatabaseMetricsManager::class;
+        return MetricManager::class;
     }
 }

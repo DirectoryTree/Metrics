@@ -5,7 +5,7 @@ namespace DirectoryTree\Metrics;
 use DirectoryTree\Metrics\Jobs\CommitMetrics;
 use DirectoryTree\Metrics\Jobs\RecordMetric;
 
-class DatabaseMetricsManager implements MetricsManager
+class DatabaseMetricManager implements MetricManager
 {
     /**
      * Whether metrics are being captured.
