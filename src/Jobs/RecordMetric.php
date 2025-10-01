@@ -43,9 +43,10 @@ class RecordMetric implements ShouldQueue
 
         $model = Metric::query()->firstOrCreate([
             'name' => $metric->name(),
-            'day' => $metric->day(),
-            'month' => $metric->month(),
+            'category' => $metric->category(),
             'year' => $metric->year(),
+            'month' => $metric->month(),
+            'day' => $metric->day(),
             'measurable_type' => $metric->measurable()?->getMorphClass(),
             'measurable_id' => $metric->measurable()?->getKey(),
         ], ['value' => 0]);
