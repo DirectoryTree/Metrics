@@ -14,6 +14,7 @@ class MetricData implements Measurable
      */
     public function __construct(
         protected BackedEnum|string $name,
+        protected BackedEnum|string|null $category = null,
         protected int $value = 1,
         protected ?CarbonInterface $date = null,
         protected ?Model $measurable = null,
@@ -28,6 +29,14 @@ class MetricData implements Measurable
     public function name(): BackedEnum|string
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function category(): BackedEnum|string|null
+    {
+        return $this->category;
     }
 
     /**

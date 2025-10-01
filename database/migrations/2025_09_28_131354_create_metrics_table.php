@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('metrics', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->index();
+            $table->string('category')->nullable()->index();
             $table->nullableMorphs('measurable');
             $table->unsignedInteger('year');
             $table->unsignedInteger('month');
@@ -21,6 +22,16 @@ return new class extends Migration
             $table->unsignedInteger('value');
             $table->json('metadata')->nullable();
             $table->timestamps();
+
+            $table->unique([
+                'name',
+                'category',
+                'year',
+                'month',
+                'day',
+                'measurable_type',
+                'measurable_id',
+            ], 'metrics_unique');
         });
     }
 

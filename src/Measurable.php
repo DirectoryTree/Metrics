@@ -13,6 +13,11 @@ interface Measurable
     public function name(): BackedEnum|string;
 
     /**
+     * Get the category of the metric.
+     */
+    public function category(): BackedEnum|string|null;
+
+    /**
      * Get the value of the metric.
      */
     public function value(): int;
