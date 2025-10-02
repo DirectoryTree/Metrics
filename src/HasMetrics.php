@@ -14,6 +14,6 @@ trait HasMetrics
      */
     public function metrics(): MorphMany
     {
-        return $this->morphMany(Metric::class, 'model');
+        return $this->morphMany(Metric::class, 'measurable');
     }
 }
