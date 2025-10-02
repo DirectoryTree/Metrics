@@ -23,11 +23,9 @@ class MetricFake implements MetricManager
     /**
      * {@inheritDoc}
      */
-    public function record(Measurable $metric): ?Metric
+    public function record(Measurable $metric): void
     {
         $this->recorded[] = $metric;
-
-        return null;
     }
 
     /**
