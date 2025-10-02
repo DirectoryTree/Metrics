@@ -41,9 +41,4 @@ interface Measurable
      * Get the measurable model of the metric.
      */
     public function measurable(): ?Model;
-
-    /**
-     * Get the metadata of the metric.
-     */
-    public function metadata(): array;
 }

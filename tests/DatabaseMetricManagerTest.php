@@ -114,28 +114,6 @@ it('can record metrics with measurable models', function () {
         ->and(Metric::where('measurable_id', $user2->id)->first()->value)->toBe(1);
 });
 
-it('can record metrics with metadata', function () {
-    config(['metrics.queue' => false]);
-
-    $metric = Metrics::record(new MetricData('page_views', metadata: ['url' => '/home']));
-
-    expect($metric->metadata)->toBe(['url' => '/home']);
-});
-
-it('overwrites metadata when recording multiple metrics separately', function () {
-    config(['metrics.queue' => false]);
-
-    Metrics::record(new MetricData('page_views', metadata: ['url' => '/home']));
-    $metric = Metrics::record(new MetricData('page_views', metadata: ['referrer' => 'google']));
-
-    $metric->refresh();
-
-    // Note: When recording metrics separately (not captured), metadata from the last record is used
-    // This is because fill() + increment() doesn't persist the metadata changes
-    expect($metric->metadata)->toBeNull()
-        ->and($metric->value)->toBe(2);
-});
-
 it('can start capturing metrics', function () {
     config(['metrics.queue' => false]);
 

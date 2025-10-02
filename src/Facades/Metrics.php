@@ -3,6 +3,7 @@
 namespace DirectoryTree\Metrics\Facades;
 
 use DirectoryTree\Metrics\Measurable;
+use DirectoryTree\Metrics\MetricFake;
 use DirectoryTree\Metrics\MetricManager;
 use Illuminate\Support\Facades\Facade;
 
@@ -21,5 +22,15 @@ class Metrics extends Facade
     protected static function getFacadeAccessor(): string
     {
         return MetricManager::class;
+    }
+
+    /**
+     * Replace the bound instance with a fake.
+     */
+    public static function fake(): MetricFake
+    {
+        return tap(new MetricFake, function (MetricFake $fake) {
+            static::swap($fake);
+        });
     }
 }

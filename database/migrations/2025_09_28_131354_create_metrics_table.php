@@ -20,8 +20,9 @@ return new class extends Migration
             $table->unsignedInteger('month');
             $table->unsignedInteger('day');
             $table->unsignedInteger('value');
-            $table->json('metadata')->nullable();
             $table->timestamps();
+
+            $table->index(['year', 'month', 'day']);
 
             $table->unique([
                 'name',

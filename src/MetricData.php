@@ -18,7 +18,6 @@ class MetricData implements Measurable
         protected int $value = 1,
         protected ?CarbonInterface $date = null,
         protected ?Model $measurable = null,
-        protected array $metadata = [],
     ) {
         $this->date ??= new CarbonImmutable;
     }
@@ -77,13 +76,5 @@ class MetricData implements Measurable
     public function measurable(): ?Model
     {
         return $this->measurable;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function metadata(): array
-    {
-        return $this->metadata;
     }
 }

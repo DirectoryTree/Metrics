@@ -26,11 +26,7 @@ class RecordMetric implements ShouldQueue
      */
     public function handle(): ?Metric
     {
-        $metrics = Collection::make(
-            $this->metrics instanceof Collection
-                ? $this->metrics
-                : [$this->metrics]
-        );
+        $metrics = Collection::wrap($this->metrics);
 
         /** @var Measurable $metric */
         if (! $metric = $metrics->first()) {
@@ -51,12 +47,7 @@ class RecordMetric implements ShouldQueue
             'measurable_id' => $metric->measurable()?->getKey(),
         ], ['value' => 0]);
 
-        $model->fill([
-            'metadata' => [
-                ...($model->metadata ?? []),
-                ...$metric->metadata(),
-            ],
-        ])->increment('value', $value);
+        $model->increment('value', $value);
 
         return $model;
     }
