@@ -3,13 +3,14 @@
     "description": "Record metrics in your Laravel application",
     "type": "library",
     "require": {
-        "illuminate/support": "^12.31",
-        "illuminate/database": "^12.31"
+        "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/collections": "^9.0|^10.0|^11.0|^12.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^10.6",
-        "laravel/pint": "^1.25",
-        "pestphp/pest": "^3.8"
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^2.0|^3.0",
+        "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0"
     },
     "license": "MIT",
     "archive": {
