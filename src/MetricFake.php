@@ -114,7 +114,7 @@ class MetricFake implements MetricManager
     {
         $callback = $callback ?: fn () => true;
 
-        return Collection::make($this->recorded)->when($callback)->filter(
+        return Collection::make($this->recorded)->filter(
             fn (Measurable $metric) => is_string($callback)
                 ? $metric->name() === $callback
                 : $callback($metric)
