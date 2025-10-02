@@ -103,8 +103,8 @@ it('can record metrics with different dates', function () {
 it('can record metrics with measurable models', function () {
     config(['metrics.queue' => false]);
 
-    $user1 = User::forceCreate(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
-    $user2 = User::forceCreate(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
+    $user1 = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user2 = User::create(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
 
     Metrics::record(new MetricData('logins', measurable: $user1));
     Metrics::record(new MetricData('logins', measurable: $user2));
@@ -208,7 +208,7 @@ it('does not commit when repository is empty', function () {
 it('groups captured metrics by name, category, date, and measurable', function () {
     config(['metrics.queue' => false]);
 
-    $user = User::forceCreate(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
     $date = CarbonImmutable::parse('2025-01-15');
 
     Metrics::capture();
