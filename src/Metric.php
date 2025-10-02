@@ -2,16 +2,24 @@
 
 namespace DirectoryTree\Metrics;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Metric extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * The factory for the model.
+     */
+    protected static string $factory = MetricFactory::class;
 
     /**
      * The attributes that should be cast.
