@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Facade;
  * @method static void capture()
  * @method static bool isCapturing()
  * @method static void stopCapturing()
+ *
+ * @see \DirectoryTree\Metrics\MetricManager
+ * @see \DirectoryTree\Metrics\MetricFake
  */
 class Metrics extends Facade
 {
