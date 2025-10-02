@@ -187,6 +187,26 @@ Captured metrics are automatically committed when the application terminates. Yo
 Metrics::stopCapturing();
 ```
 
+To enable capturing for your entire application, start capturing in your `AppServiceProvider`:
+
+```php
+// app/Providers/AppServiceProvider.php
+
+use DirectoryTree\Metrics\Facades\Metrics;
+
+class AppServiceProvider extends ServiceProvider
+{
+    // ...
+
+    public function boot(): void
+    {
+        Metrics::capture();
+    }
+}
+```
+
+This will batch all metrics recorded during the request and commit them automatically when the application terminates, reducing database queries and improving performance.
+
 ### Querying Metrics
 
 The `Metric` model includes a powerful query builder with date filtering methods:
