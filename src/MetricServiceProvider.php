@@ -29,7 +29,11 @@ class MetricServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishesMigrations([
+        $publish = method_exists($this, 'publishesMigrations')
+            ? 'publishesMigrations'
+            : 'publishes';
+
+        $this->{$publish}([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'metrics-migrations');
     }
