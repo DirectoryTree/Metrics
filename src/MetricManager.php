@@ -7,7 +7,7 @@ interface MetricManager
     /**
      * Record a metric.
      */
-    public function record(Measurable $metric): ?Metric;
+    public function record(Measurable $metric): void;
 
     /**
      * Commit all recorded metrics.

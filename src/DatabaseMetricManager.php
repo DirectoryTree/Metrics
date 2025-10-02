@@ -22,17 +22,15 @@ class DatabaseMetricManager implements MetricManager
     /**
      * {@inheritDoc}
      */
-    public function record(Measurable $metric): ?Metric
+    public function record(Measurable $metric): void
     {
         if ($this->capturing) {
             $this->repository->add($metric);
         } elseif (config('metrics.queue')) {
             RecordMetric::dispatch($metric);
         } else {
-            return (new RecordMetric($metric))->handle();
+            (new RecordMetric($metric))->handle();
         }
-
-        return null;
     }
 
     /**

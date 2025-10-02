@@ -5,6 +5,7 @@ namespace DirectoryTree\Metrics\Jobs;
 use DirectoryTree\Metrics\Measurable;
 use DirectoryTree\Metrics\Metric;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
@@ -24,31 +25,35 @@ class RecordMetric implements ShouldQueue
     /**
      * Record the metric.
      */
-    public function handle(): ?Metric
+    public function handle(): void
     {
         $metrics = Collection::wrap($this->metrics);
 
         /** @var Measurable $metric */
         if (! $metric = $metrics->first()) {
-            return null;
+            return;
         }
 
         $value = $metrics->sum(
             fn (Measurable $metric) => $metric->value()
         );
 
-        $model = Metric::query()->firstOrCreate([
-            'name' => $metric->name(),
-            'category' => $metric->category(),
-            'year' => $metric->year(),
-            'month' => $metric->month(),
-            'day' => $metric->day(),
-            'measurable_type' => $metric->measurable()?->getMorphClass(),
-            'measurable_id' => $metric->measurable()?->getKey(),
-        ], ['value' => 0]);
+        Metric::query()->getConnection()->transaction(
+            function (ConnectionInterface $connection) use ($metric, $value) {
+                $model = Metric::query()->firstOrCreate([
+                    'name' => $metric->name(),
+                    'category' => $metric->category(),
+                    'year' => $metric->year(),
+                    'month' => $metric->month(),
+                    'day' => $metric->day(),
+                    'measurable_type' => $metric->measurable()?->getMorphClass(),
+                    'measurable_id' => $metric->measurable()?->getKey(),
+                ], ['value' => 0]);
 
-        $model->increment('value', $value);
-
-        return $model;
+                Metric::query()->whereKey($model->getKey())->update([
+                    'value' => $connection->raw('value + '.$value),
+                ]);
+            }
+        );
     }
 }
