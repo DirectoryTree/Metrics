@@ -4,16 +4,15 @@ namespace DirectoryTree\Metrics\Jobs;
 
 use DirectoryTree\Metrics\Measurable;
 use DirectoryTree\Metrics\Metric;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
 
 class RecordMetric implements ShouldQueue
 {
-    use Dispatchable;
-    use Queueable;
+    use Dispatchable, Queueable;
 
     /**
      * Constructor.

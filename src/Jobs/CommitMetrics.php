@@ -3,15 +3,14 @@
 namespace DirectoryTree\Metrics\Jobs;
 
 use DirectoryTree\Metrics\MetricData;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
 
 class CommitMetrics implements ShouldQueue
 {
-    use Dispatchable;
-    use Queueable;
+    use Dispatchable, Queueable;
 
     /**
      * Constructor.
