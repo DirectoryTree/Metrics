@@ -14,5 +14,5 @@ return [
     |
     */
 
-    'queue' => env('SCOUT_QUEUE', false),
+    'queue' => env('METRICS_QUEUE', false),
 ];
