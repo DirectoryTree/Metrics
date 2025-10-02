@@ -16,12 +16,20 @@ beforeEach(function () {
 it('can record a metric without queueing', function () {
     config(['metrics.queue' => false]);
 
-    $metric = Metrics::record(new MetricData('page_views'));
+    Metrics::record(new MetricData('page_views'));
 
-    expect($metric)->toBeInstanceOf(Metric::class)
-        ->and($metric->name)->toBe('page_views')
-        ->and($metric->value)->toBe(1)
-        ->and(Metric::count())->toBe(1);
+    expect(Metric::count())->toBe(1);
+
+    $metric = Metric::first();
+
+    expect($metric->name)->toBe('page_views')
+        ->and($metric->category)->toBeNull()
+        ->and($metric->year)->toBe(today()->year)
+        ->and($metric->month)->toBe(today()->month)
+        ->and($metric->day)->toBe(today()->day)
+        ->and($metric->measurable_type)->toBeNull()
+        ->and($metric->measurable_id)->toBeNull()
+        ->and($metric->value)->toBe(1);
 
     Queue::assertNothingPushed();
 });
@@ -29,9 +37,9 @@ it('can record a metric without queueing', function () {
 it('can record a metric with queueing enabled', function () {
     config(['metrics.queue' => true]);
 
-    $metric = Metrics::record(new MetricData('page_views'));
+    Metrics::record(new MetricData('page_views'));
 
-    expect($metric)->toBeNull();
+    expect(Metric::count())->toBe(0);
 
     Queue::assertPushed(RecordMetric::class);
 });
