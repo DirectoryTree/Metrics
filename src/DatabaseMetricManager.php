@@ -45,9 +45,11 @@ class DatabaseMetricManager implements MetricManager
         }
 
         if ($queue = config('metrics.queue')) {
-            CommitMetrics::dispatch($metrics, $queue);
+            CommitMetrics::dispatch($metrics)
+                ->onQueue($queue['queue'] ?? null)
+                ->onConnection($queue['connection'] ?? null);
         } else {
-            (new CommitMetrics($metrics, $queue))->handle();
+            (new CommitMetrics($metrics))->handle();
         }
 
         $this->repository->flush();

@@ -6,18 +6,18 @@ use DirectoryTree\Metrics\Measurable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 
 class CommitMetrics implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable;
 
     /**
      * Constructor.
      */
     public function __construct(
         public array $metrics,
-        public bool $shouldQueue,
     ) {}
 
     /**
@@ -38,8 +38,10 @@ class CommitMetrics implements ShouldQueue
                 ]));
             })
             ->each(function (Collection $metrics) {
-                if ($this->shouldQueue) {
-                    RecordMetric::dispatch($metrics);
+                if (isset($this->job)) {
+                    RecordMetric::dispatch($metrics)
+                        ->onQueue($this->queue)
+                        ->onConnection($this->connection);
                 } else {
                     (new RecordMetric($metrics))->handle();
                 }

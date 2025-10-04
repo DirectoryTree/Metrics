@@ -14,5 +14,8 @@ return [
     |
     */
 
-    'queue' => env('METRICS_QUEUE', false),
+    'queue' => env('METRICS_QUEUE', false) ? [
+        'connection' => env('QUEUE_CONNECTION', 'sync'),
+        'queue' => null,
+    ] : false,
 ];
