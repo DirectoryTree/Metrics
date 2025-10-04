@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static void capture()
  * @method static bool isCapturing()
  * @method static void stopCapturing()
+ * @method static void assertRecorded(\Closure|string $callback)
+ * @method static void assertRecordedTimes(\Closure|string $callback, int $times = 1)
+ * @method static void assertNotRecorded(\Closure|string $callback)
+ * @method static void assertNothingRecorded()
  *
  * @see \DirectoryTree\Metrics\MetricManager
  * @see \DirectoryTree\Metrics\MetricFake
