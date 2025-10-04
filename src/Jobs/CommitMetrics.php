@@ -2,7 +2,7 @@
 
 namespace DirectoryTree\Metrics\Jobs;
 
-use DirectoryTree\Metrics\MetricData;
+use DirectoryTree\Metrics\Measurable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,7 +26,7 @@ class CommitMetrics implements ShouldQueue
     public function handle(): void
     {
         Collection::make($this->metrics)
-            ->groupBy(function (MetricData $data) {
+            ->groupBy(function (Measurable $data) {
                 return implode(array_filter([
                     $data->name(),
                     $data->category(),
