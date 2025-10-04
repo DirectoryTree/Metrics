@@ -39,6 +39,6 @@ class MetricServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__.'/../config/metrics.php' => $this->app['path.config'].DIRECTORY_SEPARATOR.'metrics.php',
-        ]);
+        ], 'metrics-config');
     }
 }

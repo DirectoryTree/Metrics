@@ -62,7 +62,7 @@ php artisan migrate
 Optionally, you can publish the configuration file:
 
 ```bash
-php artisan vendor:publish --provider="DirectoryTree\Metrics\MetricServiceProvider"
+php artisan vendor:publish --tag="metrics-config"
 ```
 
 This will create a `config/metrics.php` file where you can configure queueing behavior:
