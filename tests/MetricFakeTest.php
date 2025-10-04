@@ -184,7 +184,11 @@ it('facade fake returns MetricFake instance', function () {
 it('can assert metrics with different properties', function () {
     $fake = new MetricFake;
 
-    $user = User::forceCreate(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user = User::create([
+        'name' => 'John',
+        'email' => 'john@example.com',
+        'password' => 'password',
+    ]);
 
     $fake->record(new MetricData('logins', measurable: $user));
 

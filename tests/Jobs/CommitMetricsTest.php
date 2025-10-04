@@ -6,6 +6,7 @@ use DirectoryTree\Metrics\Jobs\RecordMetric;
 use DirectoryTree\Metrics\Metric;
 use DirectoryTree\Metrics\MetricData;
 use DirectoryTree\Metrics\Tests\User;
+use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
 
@@ -16,7 +17,7 @@ beforeEach(function () {
 it('commits a single metric without queueing', function () {
     $metrics = [new MetricData('page_views')];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(1)
         ->and(Metric::first()->name)->toBe('page_views')
@@ -32,7 +33,7 @@ it('commits multiple different metrics without queueing', function () {
         new MetricData('errors'),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(3)
         ->and(Metric::where('name', 'page_views')->exists())->toBeTrue()
@@ -49,7 +50,7 @@ it('groups metrics by name and sums values', function () {
         new MetricData('page_views', value: 2),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(1)
         ->and(Metric::first()->name)->toBe('page_views')
@@ -63,7 +64,7 @@ it('groups metrics by category', function () {
         new MetricData('page_views', 'analytics', value: 2),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(2)
         ->and(Metric::where('category', 'marketing')->first()->value)->toBe(8) // 5 + 3
@@ -80,7 +81,7 @@ it('groups metrics by date', function () {
         new MetricData('page_views', value: 2, date: $yesterday),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(2)
         ->and(Metric::where('day', 15)->first()->value)->toBe(8) // 5 + 3
@@ -88,8 +89,8 @@ it('groups metrics by date', function () {
 });
 
 it('groups metrics by measurable model', function () {
-    $user1 = User::forceCreate(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
-    $user2 = User::forceCreate(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
+    $user1 = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user2 = User::create(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
 
     $metrics = [
         new MetricData('logins', value: 5, measurable: $user1),
@@ -97,7 +98,7 @@ it('groups metrics by measurable model', function () {
         new MetricData('logins', value: 2, measurable: $user2),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(2)
         ->and(Metric::where('measurable_id', $user1->id)->first()->value)->toBe(8) // 5 + 3
@@ -105,7 +106,11 @@ it('groups metrics by measurable model', function () {
 });
 
 it('groups metrics by all unique attributes', function () {
-    $user = User::forceCreate(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user = User::create([
+        'name' => 'John',
+        'email' => 'john@example.com',
+        'password' => 'password',
+    ]);
 
     $date = CarbonImmutable::parse('2025-01-15');
 
@@ -116,7 +121,7 @@ it('groups metrics by all unique attributes', function () {
         new MetricData('logins', measurable: $user),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(3)
         ->and(Metric::where('name', 'page_views')->where('category', 'marketing')->first()->value)->toBe(3) // 1 + 2
@@ -124,33 +129,37 @@ it('groups metrics by all unique attributes', function () {
         ->and(Metric::where('name', 'logins')->first()->value)->toBe(1);
 });
 
-it('dispatches jobs when queueing is enabled', function () {
+it('dispatches jobs when job is set', function () {
     $metrics = [
         new MetricData('page_views'),
         new MetricData('api_calls'),
     ];
 
-    (new CommitMetrics($metrics, true))->handle();
+    (new CommitMetrics($metrics))
+        ->setJob(mock(Job::class))
+        ->handle();
 
     expect(Metric::count())->toBe(0);
 
     Queue::assertPushed(RecordMetric::class, 2); // One for each unique metric
 });
 
-it('dispatches grouped jobs when queueing is enabled', function () {
+it('dispatches grouped jobs when job is set', function () {
     $metrics = [
         new MetricData('page_views', value: 5),
         new MetricData('page_views', value: 3),
         new MetricData('api_calls', value: 2),
     ];
 
-    (new CommitMetrics($metrics, true))->handle();
+    (new CommitMetrics($metrics))
+        ->setJob(mock(Job::class))
+        ->handle();
 
     Queue::assertPushed(RecordMetric::class, 2); // One for page_views, one for api_calls
 });
 
 it('handles empty metrics array', function () {
-    (new CommitMetrics([], false))->handle();
+    (new CommitMetrics([]))->handle();
 
     expect(Metric::count())->toBe(0);
 
@@ -163,7 +172,7 @@ it('handles metrics with null category', function () {
         new MetricData('page_views', null, value: 3),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(1)
         ->and(Metric::first()->category)->toBeNull()
@@ -176,7 +185,7 @@ it('handles metrics with null measurable', function () {
         new MetricData('page_views', value: 3),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(1)
         ->and(Metric::first()->measurable_type)->toBeNull()
@@ -191,7 +200,7 @@ it('separates metrics with same name but different categories', function () {
         new MetricData('page_views', null),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(3);
 });
@@ -203,7 +212,7 @@ it('commits large number of metrics efficiently', function () {
         $metrics[] = new MetricData('page_views', value: 1);
     }
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(1)
         ->and(Metric::first()->value)->toBe(100);
@@ -215,7 +224,7 @@ it('commits metrics with different names separately', function () {
         $metrics[] = new MetricData("metric_{$i}");
     }
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(10);
 });
@@ -232,7 +241,7 @@ it('groups by year, month, and day correctly', function () {
         new MetricData('page_views', value: 4, date: $date3),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(3)
         ->and(Metric::where('year', 2025)->where('month', 1)->where('day', 15)->first()->value)->toBe(3) // 1 + 2
@@ -246,7 +255,9 @@ it('passes collection to RecordMetric job', function () {
         new MetricData('page_views', value: 3),
     ];
 
-    (new CommitMetrics($metrics, true))->handle();
+    (new CommitMetrics($metrics))
+        ->setJob(mock(Job::class))
+        ->handle();
 
     Queue::assertPushed(RecordMetric::class, function ($job) {
         return $job->metrics instanceof Collection
@@ -255,7 +266,12 @@ it('passes collection to RecordMetric job', function () {
 });
 
 it('handles mixed metric types in same commit', function () {
-    $user = User::forceCreate(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user = User::create([
+        'name' => 'John',
+        'email' => 'john@example.com',
+        'password' => 'password',
+    ]);
+
     $date = CarbonImmutable::parse('2025-01-15');
 
     $metrics = [
@@ -265,7 +281,7 @@ it('handles mixed metric types in same commit', function () {
         new MetricData('logins', measurable: $user),
     ];
 
-    (new CommitMetrics($metrics, false))->handle();
+    (new CommitMetrics($metrics))->handle();
 
     expect(Metric::count())->toBe(4);
 });
