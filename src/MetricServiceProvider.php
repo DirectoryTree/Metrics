@@ -36,5 +36,9 @@ class MetricServiceProvider extends ServiceProvider
         $this->{$publish}([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'metrics-migrations');
+
+        $this->publishes([
+            __DIR__.'/../config/metrics.php' => $this->app['path.config'].DIRECTORY_SEPARATOR.'metrics.php',
+        ]);
     }
 }
