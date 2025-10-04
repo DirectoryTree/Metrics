@@ -17,6 +17,7 @@ class CommitMetrics implements ShouldQueue
      * Constructor.
      */
     public function __construct(
+        /** @var Measurable[] */
         public array $metrics,
     ) {}
 

@@ -18,6 +18,7 @@ class RecordMetric implements ShouldQueue
      * Constructor.
      */
     public function __construct(
+        /** @var Collection<Measurable>|Measurable */
         public Collection|Measurable $metrics,
     ) {}
 
