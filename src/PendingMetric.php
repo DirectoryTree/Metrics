@@ -80,13 +80,21 @@ class PendingMetric
     public function record(int $value = 1): void
     {
         app(MetricManager::class)->record(
-            new MetricData(
-                $this->name,
-                $this->category,
-                $value,
-                $this->date,
-                $this->measurable
-            )
+            $this->toMetricData($value)
+        );
+    }
+
+    /**
+     * Convert the pending metric to a metric data object.
+     */
+    public function toMetricData(int $value): Measurable
+    {
+        return new MetricData(
+            $this->name,
+            $this->category,
+            $value,
+            $this->date,
+            $this->measurable
         );
     }
 }

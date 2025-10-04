@@ -216,7 +216,12 @@ it('does not commit when repository is empty', function () {
 it('groups captured metrics by name, category, date, and measurable', function () {
     config(['metrics.queue' => false]);
 
-    $user = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user = User::create([
+        'name' => 'John',
+        'email' => 'john@example.com',
+        'password' => 'password',
+    ]);
+
     $date = CarbonImmutable::parse('2025-01-15');
 
     Metrics::capture();
