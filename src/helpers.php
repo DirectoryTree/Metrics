@@ -1,8 +1,6 @@
 <?php
 
-namespace DirectoryTree\Metrics;
-
-use BackedEnum;
+use DirectoryTree\Metrics\PendingMetric;
 
 if (! function_exists('metric')) {
     /**
