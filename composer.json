@@ -37,6 +37,16 @@
             "email": "steven_bauman@outlook.com"
         }
     ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DirectoryTree\\Metrics\\MetricServiceProvider"
+            ],
+            "aliases": {
+                "Metrics": "DirectoryTree\\Metrics\\Facades\\Metrics"
+            }
+        }
+    },
     "config": {
         "allow-plugins": {
             "pestphp/pest-plugin": true
