@@ -26,8 +26,10 @@ class DatabaseMetricManager implements MetricManager
     {
         if ($this->capturing) {
             $this->repository->add($metric);
-        } elseif (config('metrics.queue')) {
-            RecordMetric::dispatch($metric);
+        } elseif ($queue = config('metrics.queue')) {
+            RecordMetric::dispatch($metric)
+                ->onQueue($queue['name'] ?? null)
+                ->onConnection($queue['connection'] ?? null);
         } else {
             (new RecordMetric($metric))->handle();
         }
@@ -46,7 +48,7 @@ class DatabaseMetricManager implements MetricManager
 
         if ($queue = config('metrics.queue')) {
             CommitMetrics::dispatch($metrics)
-                ->onQueue($queue['queue'] ?? null)
+                ->onQueue($queue['name'] ?? null)
                 ->onConnection($queue['connection'] ?? null);
         } else {
             (new CommitMetrics($metrics))->handle();
