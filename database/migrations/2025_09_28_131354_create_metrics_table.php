@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name')->index();
             $table->string('category')->nullable()->index();
             $table->nullableMorphs('measurable');
-            $table->unsignedInteger('year');
-            $table->unsignedInteger('month');
-            $table->unsignedInteger('day');
+            $table->unsignedSmallInteger('year');
+            $table->unsignedTinyInteger('month');
+            $table->unsignedTinyInteger('day');
             $table->unsignedInteger('value');
             $table->timestamps();
 
