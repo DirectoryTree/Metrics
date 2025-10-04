@@ -37,6 +37,14 @@ class PendingMetric
     }
 
     /**
+     * Create a new pending metric.
+     */
+    public static function make(BackedEnum|string $name): self
+    {
+        return new self($name);
+    }
+
+    /**
      * Set the category of the metric.
      */
     public function category(BackedEnum|string|null $category): self
