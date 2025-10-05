@@ -3,6 +3,8 @@
 namespace DirectoryTree\Metrics;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class MetricServiceProvider extends ServiceProvider
@@ -29,6 +31,10 @@ class MetricServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Queue::looping(function () {
+            App::make(MetricManager::class)->commit();
+        });
+
         $publish = method_exists($this, 'publishesMigrations')
             ? 'publishesMigrations'
             : 'publishes';
