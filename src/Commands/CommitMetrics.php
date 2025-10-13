@@ -24,9 +24,9 @@ class CommitMetrics extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(MetricManager $manager): int
     {
-        $count = app(MetricManager::class)->commit();
+        $count = $manager->commit();
 
         if ($count === 0) {
             $this->info('No metrics to commit.');
