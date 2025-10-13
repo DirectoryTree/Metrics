@@ -3,6 +3,7 @@
     "description": "Record metrics in your Laravel application",
     "type": "library",
     "require": {
+        "illuminate/redis": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/database": "^9.0|^10.0|^11.0|^12.0",
         "illuminate/collections": "^9.0|^10.0|^11.0|^12.0"

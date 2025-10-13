@@ -30,6 +30,17 @@ jobs:
 
         name: ${{ matrix.os }} - P${{ matrix.php }} - L${{ matrix.laravel }}
 
+        services:
+            redis:
+                image: redis:7-alpine
+                ports:
+                    - 6379:6379
+                options: >-
+                    --health-cmd "redis-cli ping"
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
         steps:
             -   name: Checkout code
                 uses: actions/checkout@v4
@@ -44,6 +55,8 @@ jobs:
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: ${{ matrix.php }}
+                    extensions: redis
+                    coverage: none
 
             -   name: Install dependencies
                 run: |
