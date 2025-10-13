@@ -26,26 +26,14 @@ class CommitMetrics implements ShouldQueue
      */
     public function handle(): void
     {
-        Collection::make($this->metrics)
-            ->groupBy(function (Measurable $data) {
-                return implode(array_filter([
-                    $data->name(),
-                    $data->category(),
-                    $data->year(),
-                    $data->month(),
-                    $data->day(),
-                    $data->measurable()?->getKey() ?? null,
-                    $data->measurable()?->getMorphClass() ?? null,
-                ]));
-            })
-            ->each(function (Collection $metrics) {
-                if (isset($this->job)) {
-                    RecordMetric::dispatch($metrics)
-                        ->onQueue($this->queue)
-                        ->onConnection($this->connection);
-                } else {
-                    (new RecordMetric($metrics))->handle();
-                }
-            });
+        Collection::make($this->metrics)->each(function (Measurable $metric) {
+            if (isset($this->job)) {
+                RecordMetric::dispatch($metric)
+                    ->onQueue($this->queue)
+                    ->onConnection($this->connection);
+            } else {
+                (new RecordMetric($metric))->handle();
+            }
+        });
     }
 }

@@ -14,6 +14,7 @@ class RedisMetricRepository implements MetricRepository
     public function __construct(
         protected RedisFactory $redis,
         protected Repository $config,
+        protected MeasurableEncoder $encoder,
     ) {}
 
     /**
@@ -21,7 +22,9 @@ class RedisMetricRepository implements MetricRepository
      */
     public function add(Measurable $metric): void
     {
-        $this->connection()->rpush($this->key(), serialize($metric));
+        $key = $this->encoder->encode($metric);
+
+        $this->connection()->hincrby($this->key(), $key, $metric->value());
     }
 
     /**
@@ -31,9 +34,11 @@ class RedisMetricRepository implements MetricRepository
      */
     public function all(): array
     {
-        return array_map(function (string $serialized) {
-            return unserialize($serialized);
-        }, $this->connection()->lrange($this->key(), 0, -1));
+        $metrics = $this->connection()->hgetall($this->key());
+
+        return array_map(function (int $value, string $field) {
+            return $this->encoder->decode($field, $value);
+        }, array_values($metrics), array_keys($metrics));
     }
 
     /**
@@ -49,7 +54,7 @@ class RedisMetricRepository implements MetricRepository
      */
     protected function key(): string
     {
-        return $this->config->get('metrics.redis.key', 'metrics:pending');
+        return $this->config->get('metrics.redis.key') ?? 'metrics:pending';
     }
 
     /**
