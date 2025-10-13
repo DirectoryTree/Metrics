@@ -45,5 +45,6 @@ return [
     'redis' => [
         'connection' => env('METRICS_REDIS_CONNECTION'),
         'key' => env('METRICS_REDIS_KEY', 'metrics:pending'),
+        'ttl' => env('METRICS_REDIS_TTL', 86400), // 1 day
     ],
 ];
