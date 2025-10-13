@@ -12,8 +12,8 @@ class RedisMetricRepository implements MetricRepository
      * Constructor.
      */
     public function __construct(
-        protected RedisFactory $redis,
         protected Repository $config,
+        protected RedisFactory $redis,
         protected MeasurableEncoder $encoder,
     ) {}
 
