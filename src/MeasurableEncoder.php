@@ -48,7 +48,7 @@ class MeasurableEncoder
         if ($model = $measurableClass ? new $measurableClass : null) {
             $model = $model->newFromBuilder([
                 $measurableKey => $measurableId,
-            ], $measurableConnection);
+            ], $measurableConnection ?: null);
         }
 
         return new MetricData(
