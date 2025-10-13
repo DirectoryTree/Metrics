@@ -3,6 +3,7 @@
 namespace DirectoryTree\Metrics\Jobs;
 
 use DirectoryTree\Metrics\Measurable;
+use DirectoryTree\Metrics\MeasurableEncoder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -26,14 +27,18 @@ class CommitMetrics implements ShouldQueue
      */
     public function handle(): void
     {
-        Collection::make($this->metrics)->each(function (Measurable $metric) {
-            if (isset($this->job)) {
-                RecordMetric::dispatch($metric)
-                    ->onQueue($this->queue)
-                    ->onConnection($this->connection);
-            } else {
-                (new RecordMetric($metric))->handle();
-            }
-        });
+        Collection::make($this->metrics)
+            ->groupBy(function (Measurable $data) {
+                return app(MeasurableEncoder::class)->encode($data);
+            })
+            ->each(function (Collection $metrics) {
+                if (isset($this->job)) {
+                    RecordMetric::dispatch($metrics)
+                        ->onQueue($this->queue)
+                        ->onConnection($this->connection);
+                } else {
+                    (new RecordMetric($metrics))->handle();
+                }
+            });
     }
 }
