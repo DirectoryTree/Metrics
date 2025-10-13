@@ -21,7 +21,6 @@ class MeasurableEncoder
             $metric->month(),
             $metric->day(),
             $model ? get_class($model) : null,
-            $model?->getConnectionName() ?? null,
             $model?->getKeyName() ?? null,
             $model?->getKey() ?? null,
         ]);
@@ -39,16 +38,13 @@ class MeasurableEncoder
             $month,
             $day,
             $measurableClass,
-            $measurableConnection,
             $measurableKey,
             $measurableId,
         ] = explode('|', $key);
 
         /** @var \Illuminate\Database\Eloquent\Model|null $model */
         if ($model = $measurableClass ? new $measurableClass : null) {
-            $model = $model->newFromBuilder([
-                $measurableKey => $measurableId,
-            ], $measurableConnection ?: null);
+            $model = $model->newFromBuilder([$measurableKey => $measurableId]);
         }
 
         return new MetricData(
