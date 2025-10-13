@@ -6,9 +6,12 @@ use BackedEnum;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Queue\SerializesModels;
 
 class MetricData implements Measurable
 {
+    use SerializesModels;
+
     /**
      * Constructor.
      */
