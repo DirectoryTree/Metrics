@@ -19,8 +19,8 @@ class MetricServiceProvider extends ServiceProvider
             __DIR__.'/../config/metrics.php', 'metrics'
         );
 
-        $this->app->singleton(MetricManager::class, DatabaseMetricManager::class);
-        $this->app->singleton(MetricRepository::class, ArrayMetricRepository::class);
+        $this->app->scoped(MetricManager::class, DatabaseMetricManager::class);
+        $this->app->scoped(MetricRepository::class, ArrayMetricRepository::class);
     }
 
     /**
