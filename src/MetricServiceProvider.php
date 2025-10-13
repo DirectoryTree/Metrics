@@ -2,6 +2,7 @@
 
 namespace DirectoryTree\Metrics;
 
+use DirectoryTree\Metrics\Commands\CommitMetrics;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Queue;
@@ -20,10 +21,6 @@ class MetricServiceProvider extends ServiceProvider
 
         $this->app->singleton(MetricManager::class, DatabaseMetricManager::class);
         $this->app->singleton(MetricRepository::class, ArrayMetricRepository::class);
-
-        $this->app->terminating(function (Application $app) {
-            $app->make(MetricManager::class)->commit();
-        });
     }
 
     /**
@@ -31,9 +28,19 @@ class MetricServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Queue::looping(function () {
-            App::make(MetricManager::class)->commit();
-        });
+        if ($this->app->runningInConsole()) {
+            $this->commands(CommitMetrics::class);
+        }
+
+        if ($this->app->make('config')->get('metrics.auto_commit', true)) {
+            $this->app->terminating(function (Application $app) {
+                $app->make(MetricManager::class)->commit();
+            });
+
+            Queue::looping(function () {
+                App::make(MetricManager::class)->commit();
+            });
+        }
 
         $publish = method_exists($this, 'publishesMigrations')
             ? 'publishesMigrations'

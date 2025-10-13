@@ -31,9 +31,13 @@ class MetricFake implements MetricManager
     /**
      * {@inheritDoc}
      */
-    public function commit(): void
+    public function commit(): int
     {
+        $count = count($this->recorded);
+
         $this->recorded = [];
+
+        return $count;
     }
 
     /**
