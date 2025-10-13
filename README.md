@@ -15,7 +15,9 @@ A simple and elegant way to record metrics in your Laravel application.
 
 ---
 
-Metrics provides a simple, elegant way to record and query metrics in your Laravel application. Track page views, API calls, user signups, or any other countable events with ease.
+Metrics provides a simple, elegant way to record and query metrics in your Laravel application.
+
+Track page views, API calls, user signups, or any other countable events.
 
 ## Index
 
