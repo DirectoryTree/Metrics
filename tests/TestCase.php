@@ -10,14 +10,6 @@ use function Orchestra\Testbench\laravel_migration_path;
 abstract class TestCase extends BaseTestCase
 {
     /**
-     * Define environment setup.
-     */
-    protected function defineEnvironment($app): void
-    {
-        $app['config']->set('database.default', 'testing');
-    }
-
-    /**
      * Define database migrations.
      */
     protected function defineDatabaseMigrations(): void
