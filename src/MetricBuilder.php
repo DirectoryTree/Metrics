@@ -152,7 +152,7 @@ class MetricBuilder extends Builder
     public function betweenDates(CarbonInterface $start, CarbonInterface $end): self
     {
         return $this->whereRaw(
-            '(year, month, day) BETWEEN (?, ?, ?) AND (?, ?, ?)',
+            '(year, month, day) >= (?, ?, ?) AND (year, month, day) <= (?, ?, ?)',
             [
                 $start->year, $start->month, $start->day,
                 $end->year,   $end->month,   $end->day,
