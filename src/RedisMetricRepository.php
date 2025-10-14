@@ -25,8 +25,11 @@ class RedisMetricRepository implements MetricRepository
         $key = $this->encoder->encode($metric);
 
         $this->connection()->pipeline(function ($pipe) use ($key, $metric) {
+            // Increment the metric value.
             $pipe->hincrby($this->key(), $key, $metric->value());
-            $pipe->expire($this->key(), $this->config->get('metrics.redis.ttl') ?? 86400); // 1 day
+
+            // Set or bump the expiration time.
+            $pipe->expire($this->key(), $this->config->get('metrics.redis.ttl'));
         });
     }
 
@@ -39,8 +42,8 @@ class RedisMetricRepository implements MetricRepository
     {
         $metrics = $this->connection()->hgetall($this->key());
 
-        return array_map(function (int $value, string $field) {
-            return $this->encoder->decode($field, $value);
+        return array_map(function (string $value, string $field) {
+            return $this->encoder->decode($field, (int) $value);
         }, array_values($metrics), array_keys($metrics));
     }
 
