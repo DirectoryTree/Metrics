@@ -289,12 +289,10 @@ public function handle()
 {
     Metrics::capture();
 
-    Order::pending()->chunk(100, function ($orders) {
-        foreach ($orders as $order) {
-            $order->process();
+    Order::pending()->each(function (Order $order) {
+        $order->process();
 
-            metric('orders_processed')->record();
-        }
+        metric('orders:processed')->record();
     });
 
     Metrics::commit(); // Batch commit all metrics
