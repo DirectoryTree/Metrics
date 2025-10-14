@@ -42,14 +42,18 @@ class MeasurableEncoder
             $measurableId,
         ] = explode('|', $key);
 
-        /** @var \Illuminate\Database\Eloquent\Model|null $model */
-        if ($model = $measurableClass ? new $measurableClass : null) {
-            $model = $model->newFromBuilder([$measurableKey => $measurableId]);
+        if ($measurableClass && class_exists($measurableClass)) {
+            /** @var \Illuminate\Database\Eloquent\Model $model */
+            $model = (new $measurableClass)->newFromBuilder([
+                $measurableKey => $measurableId,
+            ]);
+        } else {
+            $model = null;
         }
 
         return new MetricData(
             $name,
-            $category ?: null,
+            $category === '' ? null : $category,
             $value,
             CarbonImmutable::create($year, $month, $day),
             $model
