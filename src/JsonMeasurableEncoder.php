@@ -23,6 +23,7 @@ class JsonMeasurableEncoder implements MeasurableEncoder
             'measurable' => $model ? get_class($model) : null,
             'measurable_key' => $model?->getKeyName() ?? null,
             'measurable_id' => $model?->getKey() ?? null,
+            'additional' => $metric->additional(),
         ]);
     }
 
@@ -53,7 +54,8 @@ class JsonMeasurableEncoder implements MeasurableEncoder
             category: $attributes['category'],
             value: $value,
             date: $date,
-            measurable: $model
+            measurable: $model,
+            additional: $attributes['additional'] ?? [],
         );
     }
 }
