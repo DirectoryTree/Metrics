@@ -68,17 +68,7 @@ Optionally, you can publish the configuration file:
 php artisan vendor:publish --tag="metrics-config"
 ```
 
-This will create a `config/metrics.php` file where you can configure the driver and queueing behavior:
-
-```php
-return [
-    'driver' => 'array', // or 'redis'
-
-    'queue' => ...
-
-    'redis' => ...
-];
-```
+This will create a `config/metrics.php` file where you can configure the driver and queueing behavior.
 
 ### Using the Redis Driver
 
