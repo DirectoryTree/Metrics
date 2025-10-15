@@ -43,11 +43,7 @@ it('can set date', function () {
 });
 
 it('can set measurable', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $pending = PendingMetric::make('logins')->measurable($user);
 
@@ -58,11 +54,7 @@ it('can set measurable', function () {
 });
 
 it('can chain multiple setters', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $date = Carbon::yesterday();
 
@@ -132,11 +124,7 @@ it('records metric with custom date', function () {
 });
 
 it('records metric with measurable model', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     PendingMetric::make('logins')
         ->measurable($user)
@@ -151,11 +139,7 @@ it('records metric with measurable model', function () {
 });
 
 it('records metric with all properties', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $date = Carbon::parse('2025-03-15');
 
@@ -249,11 +233,7 @@ it('can be used with helper function', function () {
 });
 
 it('helper function works with full chain', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     metric('page_views')
         ->category('marketing')

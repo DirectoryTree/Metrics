@@ -2,6 +2,7 @@
 
 namespace DirectoryTree\Metrics\Jobs;
 
+use DirectoryTree\Metrics\JsonMeasurableEncoder;
 use DirectoryTree\Metrics\Measurable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,15 +29,7 @@ class CommitMetrics implements ShouldQueue
     {
         Collection::make($this->metrics)
             ->groupBy(function (Measurable $data) {
-                return implode(array_filter([
-                    $data->name(),
-                    $data->category(),
-                    $data->year(),
-                    $data->month(),
-                    $data->day(),
-                    $data->measurable()?->getKey() ?? null,
-                    $data->measurable()?->getMorphClass() ?? null,
-                ]));
+                return app(JsonMeasurableEncoder::class)->encode($data);
             })
             ->each(function (Collection $metrics) {
                 if (isset($this->job)) {

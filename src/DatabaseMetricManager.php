@@ -38,12 +38,12 @@ class DatabaseMetricManager implements MetricManager
     /**
      * {@inheritDoc}
      */
-    public function commit(): void
+    public function commit(): int
     {
         $metrics = $this->repository->all();
 
         if (empty($metrics)) {
-            return;
+            return 0;
         }
 
         if ($queue = config('metrics.queue')) {
@@ -55,6 +55,8 @@ class DatabaseMetricManager implements MetricManager
         }
 
         $this->repository->flush();
+
+        return count($metrics);
     }
 
     /**

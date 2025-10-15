@@ -12,7 +12,7 @@ interface MetricManager
     /**
      * Commit all recorded metrics.
      */
-    public function commit(): void;
+    public function commit(): int;
 
     /**
      * Start capturing metrics.

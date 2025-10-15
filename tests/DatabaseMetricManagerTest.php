@@ -6,7 +6,6 @@ use DirectoryTree\Metrics\Jobs\CommitMetrics;
 use DirectoryTree\Metrics\Jobs\RecordMetric;
 use DirectoryTree\Metrics\Metric;
 use DirectoryTree\Metrics\MetricData;
-use DirectoryTree\Metrics\Tests\User;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
@@ -111,8 +110,8 @@ it('can record metrics with different dates', function () {
 it('can record metrics with measurable models', function () {
     config(['metrics.queue' => false]);
 
-    $user1 = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
-    $user2 = User::create(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
+    $user1 = createUser(['name' => 'John', 'email' => 'john@example.com']);
+    $user2 = createUser(['name' => 'Jane', 'email' => 'jane@example.com']);
 
     Metrics::record(new MetricData('logins', measurable: $user1));
     Metrics::record(new MetricData('logins', measurable: $user2));
@@ -216,11 +215,7 @@ it('does not commit when repository is empty', function () {
 it('groups captured metrics by name, category, date, and measurable', function () {
     config(['metrics.queue' => false]);
 
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $date = CarbonImmutable::parse('2025-01-15');
 

@@ -5,7 +5,6 @@ use DirectoryTree\Metrics\Jobs\CommitMetrics;
 use DirectoryTree\Metrics\Jobs\RecordMetric;
 use DirectoryTree\Metrics\Metric;
 use DirectoryTree\Metrics\MetricData;
-use DirectoryTree\Metrics\Tests\User;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
@@ -89,8 +88,8 @@ it('groups metrics by date', function () {
 });
 
 it('groups metrics by measurable model', function () {
-    $user1 = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
-    $user2 = User::create(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
+    $user1 = createUser(['name' => 'John', 'email' => 'john@example.com']);
+    $user2 = createUser(['name' => 'Jane', 'email' => 'jane@example.com']);
 
     $metrics = [
         new MetricData('logins', value: 5, measurable: $user1),
@@ -106,11 +105,7 @@ it('groups metrics by measurable model', function () {
 });
 
 it('groups metrics by all unique attributes', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $date = CarbonImmutable::parse('2025-01-15');
 
@@ -266,11 +261,7 @@ it('passes collection to RecordMetric job', function () {
 });
 
 it('handles mixed metric types in same commit', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $date = CarbonImmutable::parse('2025-01-15');
 

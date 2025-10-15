@@ -93,11 +93,7 @@ it('records metric with specific date', function () {
 });
 
 it('records metric with measurable model', function () {
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     (new RecordMetric(new MetricData('logins', measurable: $user)))->handle();
 
@@ -131,8 +127,8 @@ it('treats metrics with different dates as separate', function () {
 });
 
 it('treats metrics with different measurable models as separate', function () {
-    $user1 = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
-    $user2 = User::create(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
+    $user1 = createUser(['name' => 'John', 'email' => 'john@example.com']);
+    $user2 = createUser(['name' => 'Jane', 'email' => 'jane@example.com']);
 
     (new RecordMetric(new MetricData('logins', measurable: $user1)))->handle();
     (new RecordMetric(new MetricData('logins', measurable: $user2)))->handle();
