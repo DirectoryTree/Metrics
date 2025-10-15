@@ -42,12 +42,15 @@ it('can add multiple metrics', function () {
     $repository->add($metric2);
     $repository->add($metric3);
 
-    $all = $repository->all();
+    $all = collect($repository->all())
+        ->sortBy(fn (MetricData $metric) => $metric->name())
+        ->values()
+        ->all();
 
     expect($all)->toHaveCount(3)
-        ->and($all[0]->name())->toBe('user_signups')
-        ->and($all[1]->name())->toBe('api_calls')
-        ->and($all[2]->name())->toBe('page_views');
+        ->and($all[0]->name())->toBe('api_calls')
+        ->and($all[1]->name())->toBe('page_views')
+        ->and($all[2]->name())->toBe('user_signups');
 });
 
 it('can add the same metric multiple times', function () {
@@ -181,9 +184,14 @@ it('persists metrics across repository instances', function () {
     // Create a new instance
     $repository2 = app(RedisMetricRepository::class);
 
-    expect($repository2->all())->toHaveCount(2)
-        ->and($repository2->all()[0]->name())->toBe('page_views')
-        ->and($repository2->all()[1]->name())->toBe('api_calls');
+    $all = collect($repository2->all())
+        ->sortBy(fn (MetricData $metric) => $metric->name())
+        ->values()
+        ->all();
+
+    expect($all)->toHaveCount(2)
+        ->and($all[0]->name())->toBe('api_calls')
+        ->and($all[1]->name())->toBe('page_views');
 });
 
 it('handles large numbers of metrics', function () {
