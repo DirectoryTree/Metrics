@@ -2,6 +2,7 @@
 
 namespace DirectoryTree\Metrics\Jobs;
 
+use DirectoryTree\Metrics\DatabaseMetricManager;
 use DirectoryTree\Metrics\Measurable;
 use DirectoryTree\Metrics\Metric;
 use Illuminate\Bus\Queueable;
@@ -19,7 +20,7 @@ class RecordMetric implements ShouldQueue
      */
     public function __construct(
         /** @var Collection<Measurable>|Measurable */
-        public Collection|Measurable $metrics,
+        public Collection|Measurable $metrics
     ) {}
 
     /**
@@ -38,9 +39,13 @@ class RecordMetric implements ShouldQueue
             fn (Measurable $metric) => $metric->value()
         );
 
-        Metric::query()->getConnection()->transaction(
-            function (ConnectionInterface $connection) use ($metric, $value) {
-                $model = Metric::query()->firstOrCreate([
+        /** @var \Illuminate\Database\Eloquent\Model $model */
+        $model = new DatabaseMetricManager::$model;
+
+        $model->getConnection()->transaction(
+            function (ConnectionInterface $connection) use ($metric, $value, $model) {
+                $instance = $model->newQuery()->firstOrCreate([
+                    ...$metric->additional(),
                     'name' => $metric->name(),
                     'category' => $metric->category(),
                     'year' => $metric->year(),
@@ -50,7 +55,7 @@ class RecordMetric implements ShouldQueue
                     'measurable_id' => $metric->measurable()?->getKey(),
                 ], ['value' => 0]);
 
-                Metric::query()->whereKey($model->getKey())->update([
+                $model->newQuery()->whereKey($instance->getKey())->update([
                     'value' => $connection->raw('value + '.$value),
                 ]);
             }
