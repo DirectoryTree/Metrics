@@ -102,7 +102,10 @@ Or via environment variable:
 METRICS_DRIVER=redis
 ```
 
-Then, schedule the `metrics:commit` command to periodically commit metrics from Redis to your database.
+Then, you may schedule the `metrics:commit` command to periodically commit metrics from Redis to your database:
+
+> [!important]
+> Remember to disable `auto_commit` in the configuration file if you plan on committing metrics using the commit command.
 
 ```php
 // app/Console/Kernel.php
