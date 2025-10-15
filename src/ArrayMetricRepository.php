@@ -49,7 +49,7 @@ class ArrayMetricRepository implements MetricRepository
      */
     public function all(): array
     {
-        return $this->metrics;
+        return array_values($this->metrics);
     }
 
     /**
