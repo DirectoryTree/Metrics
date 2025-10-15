@@ -107,7 +107,7 @@ PendingMetric::make('signups')->record();
 
 Which ever method you use, metrics are recorded in the same way. Use whichever you prefer.
 
-For the rest of the documentation, we will use the `metric` helper for consistency.
+For the rest of the documentation, we will use the `metric` helper for consistency and brevity.
 
 ### Metric Values
 
@@ -115,17 +115,17 @@ By default, metrics have a value of `1`. You can specify a custom value:
 
 ```php
 // Track multiple API calls at once
-metric('api_calls')->record(10);
+metric('api:requests')->record(10);
 
 // Track batch job completions
-metric('jobs_completed')->record(250);
+metric('jobs:completed')->record(250);
 ```
 
 If you record the same metric multiple times, the values will be summed:
 
 ```php
-metric('logins')->record(); // value: 1
-metric('logins')->record(); // value: 1
+metric('auth:logins')->record(); // value: 1
+metric('auth:logins')->record(); // value: 1
 
 // Database will contain one metric with value: 2
 ```
@@ -136,12 +136,12 @@ Organize metrics into categories:
 
 ```php
 // Track API calls by endpoint
-metric('api_calls')->category('users')->record();
-metric('api_calls')->category('orders')->record();
+metric('api:requests')->category('users')->record();
+metric('api:requests')->category('orders')->record();
 
 // Track errors by severity
-metric('errors')->category('critical')->record();
-metric('errors')->category('warning')->record();
+metric('app:errors')->category('critical')->record();
+metric('app:errors')->category('warning')->record();
 
 // Track purchases by payment method
 metric('purchases')->category('stripe')->record();
@@ -163,7 +163,7 @@ metric('signups')
     ->record(50);
 
 // Record yesterday's batch job completions
-metric('jobs_completed')
+metric('jobs:completed')
     ->date(Carbon::yesterday())
     ->record(1250);
 ```
@@ -185,18 +185,20 @@ class User extends Model
 Then record metrics for a specific model:
 
 ```php
-$user = User::find(1);
-
 // Track logins per user
-metric('logins')->measurable($user)->record();
+metric('auth:logins')
+    ->measurable(Auth::user())
+    ->record();
 
 // Track orders per customer
-$customer = Customer::find(1);
-metric('orders')->measurable($customer)->record();
+metric('orders')
+    ->measurable(Customer::find(...))
+    ->record();
 
 // Track API calls per client
-$apiClient = ApiClient::find(1);
-metric('api_requests')->measurable($apiClient)->record();
+metric('api:requests')
+    ->measurable(ApiClient::find(...))
+    ->record();
 ```
 
 Query metrics for a model:
@@ -204,7 +206,7 @@ Query metrics for a model:
 ```php
 // Get total logins for a user
 $totalLogins = $user->metrics()
-    ->where('name', 'logins')
+    ->where('name', 'auth:logins')
     ->sum('value');
 
 // Get orders this month for a customer
@@ -225,7 +227,7 @@ Metrics::capture();
 
 // Record multiple metrics...
 metric('signups')->record();
-metric('emails_sent')->category('welcome')->record();
+metric('notifications:sent')->category('welcome')->record();
 metric('signups')->record();
 
 // Commit all captured metrics at once
@@ -270,10 +272,10 @@ public function store(Request $request)
     metric('signups')->record();
 
     $user->sendWelcomeEmail();
-    metric('emails_sent')->category('welcome')->record();
+    metric('notifications:sent')->category('welcome')->record();
 
     event(new UserRegistered($user));
-    metric('events_dispatched')->record();
+    metric('events:dispatched')->record();
 
     // All metrics committed automatically at end of request
     return response()->json($user);
@@ -291,7 +293,7 @@ public function handle()
         foreach ($orders as $order) {
             $order->process();
 
-            metric('orders_processed')->record();
+            metric('orders:processed')->record();
         }
     });
 
@@ -355,7 +357,7 @@ $purchases = Metric::thisWeek()
 
 // Get API usage by endpoint this month
 $apiUsage = Metric::thisMonth()
-    ->where('name', 'api_calls')
+    ->where('name', 'api:requests')
     ->get()
     ->groupBy('category')
     ->map->sum('value');
@@ -388,7 +390,7 @@ $errors = Metric::thisYear()
     ->sum('value');
 
 $requests = Metric::thisYear()
-    ->where('name', 'api_calls')
+    ->where('name', 'api:requests')
     ->sum('value');
 
 $errorRate = ($errors / $requests) * 100;
@@ -424,7 +426,7 @@ public function test_api_call_records_metric_with_endpoint()
 
     // Assert metrics were recorded with a closure
     Metrics::assertRecorded(fn (Measurable $metric) =>
-        $metric->name() === 'api_calls' &&
+        $metric->name() === 'api:requests' &&
         $metric->category() === 'users'
     );
 }
@@ -439,10 +441,10 @@ public function test_failed_login_records_metric()
     ]);
 
     // Assert metrics were not recorded
-    Metrics::assertNotRecorded('logins');
+    Metrics::assertNotRecorded('auth:logins');
 
     // Assert failed login was recorded
-    Metrics::assertRecorded('failed_logins');
+    Metrics::assertRecorded('auth:attempts');
 }
 
 public function test_purchase_records_metric_for_user()
@@ -451,7 +453,7 @@ public function test_purchase_records_metric_for_user()
 
     $user = User::factory()->create();
 
-    $this->actingAs($user)->post('/purchases', [
+    $this->actingAs($user)->post('purchases', [
         'product_id' => 1,
     ]);
 
@@ -470,7 +472,7 @@ public function test_batch_job_records_metrics()
     Artisan::call('orders:process');
 
     // Assert metrics were recorded a specific number of times
-    Metrics::assertRecordedTimes('orders_processed', 100);
+    Metrics::assertRecordedTimes('orders:processed', 100);
 }
 ```
 
@@ -479,13 +481,13 @@ Access recorded metrics in tests:
 ```php
 Metrics::fake();
 
-metric('api_calls')->category('users')->record();
+metric('api:requests')->category('users')->record();
 
 // Get all recorded metrics
 $all = Metrics::recorded();
 
 // Get metrics by name
-$apiCalls = Metrics::recorded('api_calls');
+$apiCalls = Metrics::recorded('api:requests');
 
 // Get metrics with a closure
 $userEndpoint = Metrics::recorded(fn ($metric) =>
