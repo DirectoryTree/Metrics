@@ -15,7 +15,9 @@ A simple and elegant way to record metrics in your Laravel application.
 
 ---
 
-Metrics provides a simple, elegant way to record and query metrics in your Laravel application. Track page views, API calls, user signups, or any other countable events with ease.
+Metrics provides a simple, elegant way to record and query metrics in your Laravel application.
+
+Track page views, API calls, user signups, or any other countable events.
 
 ## Index
 
@@ -289,12 +291,10 @@ public function handle()
 {
     Metrics::capture();
 
-    Order::pending()->chunk(100, function ($orders) {
-        foreach ($orders as $order) {
-            $order->process();
+    Order::pending()->each(function (Order $order) {
+        $order->process();
 
-            metric('orders:processed')->record();
-        }
+        metric('orders:processed')->record();
     });
 
     Metrics::commit(); // Batch commit all metrics

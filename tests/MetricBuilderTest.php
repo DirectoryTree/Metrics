@@ -19,8 +19,8 @@ it('can filter metrics for today', function () {
     $metrics = Metric::today()->get();
 
     expect($metrics)->toHaveCount(1)
-        ->and($metrics->first()->day)->toBe(15)
-        ->and($metrics->first()->value)->toBe(100);
+        ->and($metrics->first()->day)->toEqual(15)
+        ->and($metrics->first()->value)->toEqual(100);
 });
 
 it('can filter metrics for yesterday', function () {
@@ -31,8 +31,8 @@ it('can filter metrics for yesterday', function () {
     $metrics = Metric::yesterday()->get();
 
     expect($metrics)->toHaveCount(1)
-        ->and($metrics->first()->day)->toBe(14)
-        ->and($metrics->first()->value)->toBe(100);
+        ->and($metrics->first()->day)->toEqual(14)
+        ->and($metrics->first()->value)->toEqual(100);
 });
 
 it('can filter metrics for this week', function () {
@@ -46,7 +46,7 @@ it('can filter metrics for this week', function () {
     $metrics = Metric::thisWeek()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for last week', function () {
@@ -60,7 +60,7 @@ it('can filter metrics for last week', function () {
     $metrics = Metric::lastWeek()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for this month', function () {
@@ -73,7 +73,7 @@ it('can filter metrics for this month', function () {
     $metrics = Metric::thisMonth()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for last month', function () {
@@ -86,7 +86,7 @@ it('can filter metrics for last month', function () {
     $metrics = Metric::lastMonth()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for this quarter', function () {
@@ -100,7 +100,7 @@ it('can filter metrics for this quarter', function () {
     $metrics = Metric::thisQuarter()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for last quarter', function () {
@@ -114,7 +114,7 @@ it('can filter metrics for last quarter', function () {
     $metrics = Metric::lastQuarter()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for this year', function () {
@@ -127,7 +127,7 @@ it('can filter metrics for this year', function () {
     $metrics = Metric::thisYear()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics for last year', function () {
@@ -140,7 +140,7 @@ it('can filter metrics for last year', function () {
     $metrics = Metric::lastYear()->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics between specific dates', function () {
@@ -156,7 +156,7 @@ it('can filter metrics between specific dates', function () {
     $metrics = Metric::betweenDates($start, $end)->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter metrics on a specific date', function () {
@@ -170,7 +170,7 @@ it('can filter metrics on a specific date', function () {
     $metrics = Metric::onDate($date)->get();
 
     expect($metrics)->toHaveCount(2)
-        ->and($metrics->sum('value'))->toBe(300);
+        ->and($metrics->sum('value'))->toEqual(300);
 });
 
 it('can chain builder methods with where clauses', function () {
@@ -182,7 +182,7 @@ it('can chain builder methods with where clauses', function () {
 
     expect($metrics)->toHaveCount(1)
         ->and($metrics->first()->name)->toBe('page_views')
-        ->and($metrics->first()->value)->toBe(100);
+        ->and($metrics->first()->value)->toEqual(100);
 });
 
 it('can sum values for a date range', function () {
@@ -193,7 +193,7 @@ it('can sum values for a date range', function () {
 
     $total = Metric::thisWeek()->where('name', 'page_views')->sum('value');
 
-    expect($total)->toBe(450);
+    expect($total)->toEqual(450);
 });
 
 it('can count metrics for a date range', function () {
@@ -204,7 +204,7 @@ it('can count metrics for a date range', function () {
 
     $count = Metric::today()->count();
 
-    expect($count)->toBe(3);
+    expect($count)->toEqual(3);
 });
 
 it('returns empty collection when no metrics match date filter', function () {
@@ -226,7 +226,7 @@ it('can filter across month boundaries', function () {
     $metrics = Metric::betweenDates($start, $end)->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
 
 it('can filter across year boundaries', function () {
@@ -240,5 +240,5 @@ it('can filter across year boundaries', function () {
     $metrics = Metric::betweenDates($start, $end)->get();
 
     expect($metrics)->toHaveCount(3)
-        ->and($metrics->sum('value'))->toBe(60);
+        ->and($metrics->sum('value'))->toEqual(60);
 });
