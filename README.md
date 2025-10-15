@@ -119,14 +119,9 @@ You can also run the command manually:
 php artisan metrics:commit
 ```
 
-This approach provides several benefits:
+This approach provides reduced database load since metrics can be committed in bulk at an expected interval instead of at the end of the request life-cycle.
 
-- **Reduced database load**: Metrics are batched and committed in bulk
-- **Improved performance**: Redis operations are faster than database writes
-- **Distributed support**: Multiple application servers can write to the same Redis instance
-- **Automatic aggregation**: Duplicate metrics are automatically summed in Redis before committing
-
-The Redis driver uses a hash to store pending metrics with a configurable TTL (default: 1 day). This ensures metrics are eventually committed even if the scheduled command fails temporarily.
+The Redis driver uses a hash to store pending metrics with a configurable TTL (default of 1 day). This ensures metrics are eventually committed even if the scheduled command fails temporarily.
 
 ## Usage
 
