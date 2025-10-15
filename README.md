@@ -24,6 +24,7 @@ Track page views, API calls, user signups, or any other countable events.
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Setup](#setup)
+  - [Using the Redis Driver](#using-the-redis-driver)
 - [Usage](#usage)
   - [Recording Metrics](#recording-metrics)
   - [Recording with Categories](#recording-with-categories)
@@ -67,18 +68,65 @@ Optionally, you can publish the configuration file:
 php artisan vendor:publish --tag="metrics-config"
 ```
 
-This will create a `config/metrics.php` file where you can configure queueing behavior:
+This will create a `config/metrics.php` file where you can configure the driver and queueing behavior:
 
 ```php
 return [
-    // ...
+    'driver' => 'array', // or 'redis'
 
-    'queue' => env('METRICS_QUEUE', false) ? [
-        'name' => env('METRICS_QUEUE_NAME'),
-        'connection' => env('METRICS_QUEUE_CONNECTION', env('QUEUE_CONNECTION', 'sync')),
-    ] : false,
+    'queue' => ...
+
+    'redis' => ...
 ];
 ```
+
+### Using the Redis Driver
+
+For distributed applications or high-traffic scenarios, you can use the Redis driver to store captured metrics in Redis before committing them to the database in batches.
+
+First, set the driver to `redis` in your configuration:
+
+```php
+// config/metrics.php
+
+return [
+    'driver' => 'redis',
+    
+    // ...
+];
+```
+
+Or via environment variable:
+
+```env
+METRICS_DRIVER=redis
+```
+
+Then, schedule the `metrics:commit` command to periodically commit metrics from Redis to your database.
+
+```php
+// app/Console/Kernel.php
+
+protected function schedule(Schedule $schedule): void
+{
+    $schedule->command('metrics:commit')->hourly();
+}
+```
+
+You can also run the command manually:
+
+```bash
+php artisan metrics:commit
+```
+
+This approach provides several benefits:
+
+- **Reduced database load**: Metrics are batched and committed in bulk
+- **Improved performance**: Redis operations are faster than database writes
+- **Distributed support**: Multiple application servers can write to the same Redis instance
+- **Automatic aggregation**: Duplicate metrics are automatically summed in Redis before committing
+
+The Redis driver uses a hash to store pending metrics with a configurable TTL (default: 1 day). This ensures metrics are eventually committed even if the scheduled command fails temporarily.
 
 ## Usage
 
