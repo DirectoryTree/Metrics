@@ -42,7 +42,7 @@ Track page views, API calls, user signups, or any other countable events.
 
 ## Installation
 
-You can install the package via composer:
+You may install the package via composer:
 
 ```bash
 composer require directorytree/metrics
@@ -62,17 +62,17 @@ php artisan migrate
 
 ## Setup
 
-Optionally, you can publish the configuration file:
+Optionally, you may publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag="metrics-config"
 ```
 
-This will create a `config/metrics.php` file where you can configure the driver and queueing behavior.
+This will create a `config/metrics.php` file where you may configure the driver and queueing behavior.
 
 ### Using the Redis Driver
 
-For distributed applications or high-traffic scenarios, you can use the Redis driver to store captured metrics in Redis before committing them to the database in batches.
+For distributed applications or high-traffic scenarios, you may use the `redis` driver to store captured metrics in Redis before committing them to the database in batches.
 
 First, set the driver to `redis` in your configuration:
 
@@ -106,7 +106,7 @@ protected function schedule(Schedule $schedule): void
 }
 ```
 
-You can also run the command manually:
+You may also run the command manually:
 
 ```bash
 php artisan metrics:commit
@@ -149,7 +149,7 @@ For the rest of the documentation, we will use the `metric` helper for consisten
 
 ### Metric Values
 
-By default, metrics have a value of `1`. You can specify a custom value:
+By default, metrics have a value of `1`. You may specify a custom value in the `record` method:
 
 ```php
 // Track multiple API calls at once
@@ -190,7 +190,7 @@ These will be stored as separate metrics, allowing you to track the same metric 
 
 ### Recording with Dates
 
-By default, metrics are recorded with today's date. You can specify a custom date:
+By default, metrics are recorded with today's date. You may specify a custom date using the `date` method:
 
 ```php
 use Carbon\Carbon;
@@ -256,7 +256,7 @@ $ordersThisMonth = $customer->metrics()
 
 ### Capturing & Committing
 
-For high-performance scenarios, you can capture metrics in memory and commit them in batches:
+For high-performance scenarios, you may capture metrics in memory and commit them in batches:
 
 ```php
 use DirectoryTree\Metrics\Facades\Metrics;
@@ -272,7 +272,7 @@ metric('signups')->record();
 Metrics::commit();
 ```
 
-Captured metrics are automatically committed when the application terminates. You can also stop capturing manually:
+Captured metrics are automatically committed when the application terminates. You may also stop capturing manually:
 
 ```php
 Metrics::stopCapturing();
