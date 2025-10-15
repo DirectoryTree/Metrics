@@ -129,8 +129,8 @@ it('commits metrics with categories', function () {
 it('commits metrics with measurable models', function () {
     config(['metrics.queue' => false]);
 
-    $user1 = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
-    $user2 = User::create(['name' => 'Jane', 'email' => 'jane@example.com', 'password' => 'password']);
+    $user1 = createUser(['name' => 'John', 'email' => 'john@example.com']);
+    $user2 = createUser(['name' => 'Jane', 'email' => 'jane@example.com']);
 
     Metrics::capture();
     Metrics::record(new MetricData('logins', measurable: $user1));
@@ -233,7 +233,7 @@ it('commits metrics with different dates separately', function () {
 it('handles metrics with all properties', function () {
     config(['metrics.queue' => false]);
 
-    $user = User::create(['name' => 'John', 'email' => 'john@example.com', 'password' => 'password']);
+    $user = createUser();
     $date = now();
 
     Metrics::capture();

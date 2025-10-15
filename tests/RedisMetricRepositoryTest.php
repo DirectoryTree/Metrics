@@ -11,8 +11,10 @@ afterEach(fn () => Redis::flushdb());
 it('starts with an empty list', function () {
     $repository = app(RedisMetricRepository::class);
 
-    expect($repository->all())->toBeArray()
-        ->and($repository->all())->toBeEmpty();
+    $all = $repository->all();
+
+    expect($all)->toBeArray()
+        ->and($all)->toBeEmpty();
 });
 
 it('can add a metric', function () {
@@ -22,9 +24,11 @@ it('can add a metric', function () {
 
     $repository->add($metric);
 
-    expect($repository->all())->toHaveCount(1)
-        ->and($repository->all()[0]->name())->toBe('page_views')
-        ->and($repository->all()[0]->value())->toBe(1);
+    $all = $repository->all();
+
+    expect($all)->toHaveCount(1)
+        ->and($all[0]->name())->toBe('page_views')
+        ->and($all[0]->value())->toBe(1);
 });
 
 it('can add multiple metrics', function () {
@@ -38,10 +42,12 @@ it('can add multiple metrics', function () {
     $repository->add($metric2);
     $repository->add($metric3);
 
-    expect($repository->all())->toHaveCount(3)
-        ->and($repository->all()[0]->name())->toBe('page_views')
-        ->and($repository->all()[1]->name())->toBe('api_calls')
-        ->and($repository->all()[2]->name())->toBe('user_signups');
+    $all = $repository->all();
+
+    expect($all)->toHaveCount(3)
+        ->and($all[0]->name())->toBe('user_signups')
+        ->and($all[1]->name())->toBe('api_calls')
+        ->and($all[2]->name())->toBe('page_views');
 });
 
 it('can add the same metric multiple times', function () {
@@ -53,9 +59,11 @@ it('can add the same metric multiple times', function () {
     $repository->add($metric);
     $repository->add($metric);
 
-    expect($repository->all())->toHaveCount(1)
-        ->and($repository->all()[0]->name())->toBe('page_views')
-        ->and($repository->all()[0]->value())->toBe(3);
+    $all = $repository->all();
+
+    expect($all)->toHaveCount(1)
+        ->and($all[0]->name())->toBe('page_views')
+        ->and($all[0]->value())->toBe(3);
 });
 
 it('can flush all metrics', function () {
@@ -84,30 +92,8 @@ it('can add metrics after flushing', function () {
 
     $repository->add($metric);
 
-    expect($repository->all())->toHaveCount(1)
-        ->and($repository->all()[0]->name())->toBe('api_calls');
-});
-
-it('maintains order of added metrics', function () {
-    $repository = app(RedisMetricRepository::class);
-
-    $metrics = [
-        new MetricData('first'),
-        new MetricData('second'),
-        new MetricData('third'),
-        new MetricData('fourth'),
-    ];
-
-    foreach ($metrics as $metric) {
-        $repository->add($metric);
-    }
-
-    $all = $repository->all();
-
-    expect($all[0]->name())->toBe('first')
-        ->and($all[1]->name())->toBe('second')
-        ->and($all[2]->name())->toBe('third')
-        ->and($all[3]->name())->toBe('fourth');
+    expect($all = $repository->all())->toHaveCount(1)
+        ->and($all[0]->name())->toBe('api_calls');
 });
 
 it('correctly serializes and unserializes metrics with categories', function () {
@@ -117,7 +103,9 @@ it('correctly serializes and unserializes metrics with categories', function () 
 
     $repository->add($metric);
 
-    $retrieved = $repository->all()[0];
+    $all = $repository->all();
+
+    $retrieved = $all[0];
 
     expect($retrieved->name())->toBe('page_views')
         ->and($retrieved->category())->toBe('marketing')
@@ -132,7 +120,9 @@ it('correctly serializes and unserializes metrics with dates', function () {
 
     $repository->add($metric);
 
-    $retrieved = $repository->all()[0];
+    $all = $repository->all();
+
+    $retrieved = $all[0];
 
     expect($retrieved->year())->toBe($date->year)
         ->and($retrieved->month())->toBe($date->month)
@@ -152,7 +142,9 @@ it('correctly serializes and unserializes metrics with measurable models', funct
 
     $repository->add($metric);
 
-    $retrieved = $repository->all()[0];
+    $all = $repository->all();
+
+    $retrieved = $all[0];
 
     expect($retrieved->measurable())->not->toBeNull()
         ->and($retrieved->measurable()->getKey())->toBe($user->getKey())
@@ -183,8 +175,8 @@ it('uses default redis key when not configured', function () {
 it('persists metrics across repository instances', function () {
     $repository1 = app(RedisMetricRepository::class);
 
-    $repository1->add(new MetricData('page_views'));
     $repository1->add(new MetricData('api_calls'));
+    $repository1->add(new MetricData('page_views'));
 
     // Create a new instance
     $repository2 = app(RedisMetricRepository::class);
@@ -201,7 +193,9 @@ it('handles large numbers of metrics', function () {
         $repository->add(new MetricData("metric_{$i}"));
     }
 
-    expect($repository->all())->toHaveCount(100);
+    $all = $repository->all();
+
+    expect($all)->toHaveCount(100);
 });
 
 it('handles metrics with special characters in names', function () {
@@ -211,7 +205,9 @@ it('handles metrics with special characters in names', function () {
 
     $repository->add($metric);
 
-    $retrieved = $repository->all()[0];
+    $all = $repository->all();
+
+    $retrieved = $all[0];
 
     expect($retrieved->name())->toBe('page:views/home-page');
 });

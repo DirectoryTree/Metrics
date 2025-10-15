@@ -17,7 +17,7 @@ it('can add a metric', function () {
 
     $repository->add($metric);
 
-    $all = array_values($repository->all());
+    $all = $repository->all();
 
     expect($all)->toHaveCount(1)
         ->and($all[0]->name())->toBe($metric->name())
@@ -35,7 +35,7 @@ it('can add multiple metrics', function () {
     $repository->add($metric2);
     $repository->add($metric3);
 
-    $all = array_values($repository->all());
+    $all = $repository->all();
 
     expect($all)->toHaveCount(3)
         ->and($all[0])->toBe($metric1)
@@ -52,7 +52,7 @@ it('can add the same metric multiple times', function () {
     $repository->add($metric);
     $repository->add($metric);
 
-    $all = array_values($repository->all());
+    $all = $repository->all();
 
     expect($all)->toHaveCount(1)
         ->and($all[0]->value())->toBe(3);
@@ -84,7 +84,7 @@ it('can add metrics after flushing', function () {
 
     $repository->add($metric);
 
-    $all = array_values($repository->all());
+    $all = $repository->all();
 
     expect($all)->toHaveCount(1)
         ->and($all[0])->toBe($metric);
@@ -104,7 +104,7 @@ it('maintains order of added metrics', function () {
         $repository->add($metric);
     }
 
-    $all = array_values($repository->all());
+    $all = $repository->all();
 
     expect($all[0]->name())->toBe('first')
         ->and($all[1]->name())->toBe('second')

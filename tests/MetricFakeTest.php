@@ -3,7 +3,6 @@
 use DirectoryTree\Metrics\Facades\Metrics;
 use DirectoryTree\Metrics\MetricData;
 use DirectoryTree\Metrics\MetricFake;
-use DirectoryTree\Metrics\Tests\User;
 use Illuminate\Support\Collection;
 use PHPUnit\Framework\AssertionFailedError;
 
@@ -184,11 +183,7 @@ it('facade fake returns MetricFake instance', function () {
 it('can assert metrics with different properties', function () {
     $fake = new MetricFake;
 
-    $user = User::create([
-        'name' => 'John',
-        'email' => 'john@example.com',
-        'password' => 'password',
-    ]);
+    $user = createUser();
 
     $fake->record(new MetricData('logins', measurable: $user));
 
