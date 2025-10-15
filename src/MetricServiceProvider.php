@@ -22,7 +22,12 @@ class MetricServiceProvider extends ServiceProvider
         $this->app->bind(MeasurableEncoder::class, JsonMeasurableEncoder::class);
 
         $this->app->scoped(MetricManager::class, DatabaseMetricManager::class);
-        $this->app->scoped(MetricRepository::class, ArrayMetricRepository::class);
+        $this->app->scoped(MetricRepository::class, function (Application $app) {
+            return match ($app->make('config')->get('metrics.driver')) {
+                'redis' => $app->make(RedisMetricRepository::class),
+                default => $app->make(ArrayMetricRepository::class),
+            };
+        });
     }
 
     /**

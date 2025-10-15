@@ -1,16 +1,27 @@
 <?php
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | Metric Repository Driver
+    |--------------------------------------------------------------------------
+    |
+    | This configuration option determines which driver will be used to store
+    | captured metrics. The "array" driver stores metrics in memory, while
+    | the "redis" driver stores metrics in Redis for distributed systems.
+    |
+    */
+
+    'driver' => 'array',
 
     /*
     |--------------------------------------------------------------------------
     | Queue Metric Recording
     |--------------------------------------------------------------------------
     |
-    | When enabled, recorded metrics will be dispatched in the queued job to
-    | be saved. This is useful for high-traffic applications where recording
-    | a large number of metrics could impact performance. When disabled,
-    | metrics will be recorded synchronously.
+    | This option determines whether metric recording jobs should be queued
+    | instead of being processed synchronously. Queuing is recommended for
+    | high-traffic applications to improve performance and reduce latency.
     |
     */
 
@@ -24,9 +35,9 @@ return [
     | Auto-Commit Metrics
     |--------------------------------------------------------------------------
     |
-    | When enabled, metrics will be automatically committed when the application
-    | terminates. This is useful for capturing metrics in a request-response
-    | cycle. You can disable this and manually commit metrics when needed.
+    | This configuration option determines whether metrics will be committed
+    | automatically when the application terminates. You may disable this
+    | option if you prefer to manually commit metrics at specific times.
     |
     */
 
@@ -37,8 +48,9 @@ return [
     | Redis Configuration
     |--------------------------------------------------------------------------
     |
-    | When using the RedisMetricRepository, you can configure which Redis
-    | connection to use and the key name for storing pending metrics.
+    | This configuration option determines the Redis connection, key, and
+    | TTL for storing pending metrics when using the "redis" driver. The
+    | key stores metrics in a hash with the specified time-to-live value.
     |
     */
 
