@@ -19,6 +19,8 @@ class MetricServiceProvider extends ServiceProvider
             __DIR__.'/../config/metrics.php', 'metrics'
         );
 
+        $this->app->bind(MeasurableEncoder::class, JsonMeasurableEncoder::class);
+
         $this->app->scoped(MetricManager::class, DatabaseMetricManager::class);
         $this->app->scoped(MetricRepository::class, ArrayMetricRepository::class);
     }
