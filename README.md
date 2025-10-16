@@ -30,6 +30,7 @@ Track page views, API calls, user signups, or any other countable events.
   - [Recording with Categories](#recording-with-categories)
   - [Recording with Dates](#recording-with-dates)
   - [Recording for Models](#recording-for-models)
+  - [Recording with Custom Attributes](#recording-with-custom-attributes)
   - [Capturing & Committing](#capturing--committing)
   - [Querying Metrics](#querying-metrics)
 - [Testing](#testing)
@@ -253,6 +254,105 @@ $ordersThisMonth = $customer->metrics()
     ->thisMonth()
     ->sum('value');
 ```
+
+### Recording with Custom Attributes
+
+Store additional context with your metrics by adding custom attributes. This is useful for segmenting metrics by various dimensions like source, country, device type, or any other custom data.
+
+First, create a migration to add custom columns to the `metrics` table:
+
+```php
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+Schema::table('metrics', function (Blueprint $table) {
+    $table->string('source')->nullable()->index();
+    $table->string('country')->nullable()->index();
+    $table->string('device')->nullable();
+});
+```
+
+Then, use the `with()` method to record metrics with custom attributes:
+
+```php
+// Track page views with traffic source
+metric('page_views')
+    ->with(['source' => 'google'])
+    ->record();
+
+// Track conversions with multiple attributes
+metric('conversions')
+    ->with([
+        'source' => 'facebook',
+        'country' => 'US',
+        'device' => 'mobile',
+    ])
+    ->record();
+
+// Combine with other methods
+metric('api:requests')
+    ->category('users')
+    ->with(['client_id' => 'abc123'])
+    ->record();
+```
+
+Custom attributes are included in the metric's uniqueness check, meaning metrics with different attribute values are stored separately:
+
+```php
+metric('page_views')->with(['source' => 'google'])->record();   // Creates metric #1
+metric('page_views')->with(['source' => 'facebook'])->record(); // Creates metric #2
+metric('page_views')->with(['source' => 'google'])->record();   // Increments metric #1
+```
+
+This allows you to segment and analyze metrics by any dimension:
+
+```php
+// Get page views by source
+$googleViews = Metric::where('name', 'page_views')
+    ->where('source', 'google')
+    ->sum('value');
+
+// Get conversions by country this month
+$conversions = Metric::thisMonth()
+    ->where('name', 'conversions')
+    ->get()
+    ->groupBy('country')
+    ->map->sum('value');
+
+// Get mobile vs desktop traffic
+$mobileViews = Metric::today()
+    ->where('name', 'page_views')
+    ->where('device', 'mobile')
+    ->sum('value');
+```
+
+You can also use custom attributes with the `MetricData` class:
+
+```php
+use DirectoryTree\Metrics\MetricData;
+use DirectoryTree\Metrics\Facades\Metrics;
+
+Metrics::record(new MetricData(
+    name: 'page_views',
+    additional: [
+        'source' => 'google',
+        'country' => 'US',
+    ]
+));
+```
+
+Or with the `PendingMetric` class:
+
+```php
+use DirectoryTree\Metrics\PendingMetric;
+
+PendingMetric::make('page_views')
+    ->with(['source' => 'google', 'country' => 'US'])
+    ->record();
+```
+
+> [!important]
+> Core metric attributes (`name`, `category`, `year`, `month`, `day`, `measurable_type`, `measurable_id`, `value`) cannot be overridden via custom attributes. They are protected and will always use the values set through their respective methods.
 
 ### Capturing & Committing
 
