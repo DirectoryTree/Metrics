@@ -241,11 +241,11 @@ it('creates metrics with additional attributes', function () {
     (new RecordMetric($data))->handle();
     (new RecordMetric($data))->handle();
 
-    $recorded = Metric::first();
+    $metric = Metric::first();
 
-    expect($recorded->source)->toBe('google');
-    expect($recorded->country)->toBe('US');
-    expect($recorded->value)->toBe(2);
+    expect($metric->source)->toBe('google');
+    expect($metric->country)->toBe('US');
+    expect($metric->value)->toBe(2);
 });
 
 it('cannot override core attributes with additional attributes', function () {
