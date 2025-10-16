@@ -399,45 +399,6 @@ class AppServiceProvider extends ServiceProvider
 
 This will batch all metrics recorded during the request and commit them automatically when the application terminates, reducing database queries and improving performance.
 
-#### Example: High-Traffic Controller
-
-```php
-public function store(Request $request)
-{
-    Metrics::capture();
-
-    // Process multiple operations
-    $user = User::create($request->validated());
-    metric('signups')->record();
-
-    $user->sendWelcomeEmail();
-    metric('notifications:sent')->category('welcome')->record();
-
-    event(new UserRegistered($user));
-    metric('events:dispatched')->record();
-
-    // All metrics committed automatically at end of request
-    return response()->json($user);
-}
-```
-
-#### Example: Batch Job Processing
-
-```php
-public function handle()
-{
-    Metrics::capture();
-
-    Order::pending()->each(function (Order $order) {
-        $order->process();
-
-        metric('orders:processed')->record();
-    });
-
-    Metrics::commit(); // Batch commit all metrics
-}
-```
-
 ### Querying Metrics
 
 The `Metric` model includes a powerful query builder with date filtering methods:
@@ -501,36 +462,6 @@ $apiUsage = Metric::thisMonth()
 
 // Count unique metrics recorded today
 $count = Metric::today()->count();
-```
-
-#### Example: Compare Growth
-
-```php
-// Compare this month vs last month signups
-$thisMonth = Metric::thisMonth()
-    ->where('name', 'signups')
-    ->sum('value');
-
-$lastMonth = Metric::lastMonth()
-    ->where('name', 'signups')
-    ->sum('value');
-
-$growth = (($thisMonth - $lastMonth) / $lastMonth) * 100;
-```
-
-#### Example: Calculate Error Rate
-
-```php
-// Get error rate for the year
-$errors = Metric::thisYear()
-    ->where('name', 'errors')
-    ->sum('value');
-
-$requests = Metric::thisYear()
-    ->where('name', 'api:requests')
-    ->sum('value');
-
-$errorRate = ($errors / $requests) * 100;
 ```
 
 ## Testing
