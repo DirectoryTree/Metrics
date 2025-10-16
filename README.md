@@ -275,8 +275,9 @@ Schema::table('metrics', function (Blueprint $table) {
 Then, use the `with()` method to record metrics with custom attributes:
 
 ```php
-// Track page views with traffic source
-metric('page_views')
+// Track post views with traffic source
+metric('views')
+    ->measurable(Post::find(1))
     ->with(['source' => 'google'])
     ->record();
 
@@ -289,10 +290,10 @@ metric('conversions')
     ])
     ->record();
 
-// Combine with other methods
+// Track API requests for a user within a team
 metric('api:requests')
-    ->category('users')
-    ->with(['client_id' => 'abc123'])
+    ->measurable(Auth::user())
+    ->with(['team_id' => 123])
     ->record();
 ```
 
