@@ -13,11 +13,28 @@ class DatabaseMetricManager implements MetricManager
     protected bool $capturing = false;
 
     /**
+     * The metric model to use.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    public static string $model = Metric::class;
+
+    /**
      * Constructor.
      */
     public function __construct(
         protected MetricRepository $repository
     ) {}
+
+    /**
+     * Set the metric model to use.
+     *
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $model
+     */
+    public static function useModel(string $model): void
+    {
+        static::$model = $model;
+    }
 
     /**
      * {@inheritDoc}

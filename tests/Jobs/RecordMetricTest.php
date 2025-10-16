@@ -5,6 +5,8 @@ use DirectoryTree\Metrics\Jobs\RecordMetric;
 use DirectoryTree\Metrics\Metric;
 use DirectoryTree\Metrics\MetricData;
 use DirectoryTree\Metrics\Tests\User;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 it('can record a single metric', function () {
     $metric = new MetricData('page_views');
@@ -223,4 +225,51 @@ it('updates timestamp on increment', function () {
     $updated = Metric::first();
 
     expect($updated->updated_at->isAfter($originalUpdatedAt))->toBeTrue();
+});
+
+it('creates metrics with additional attributes', function () {
+    Schema::table('metrics', function (Blueprint $table) {
+        $table->string('source')->nullable();
+        $table->string('country')->nullable();
+    });
+
+    $data = new MetricData('page_views', additional: [
+        'source' => 'google',
+        'country' => 'US',
+    ]);
+
+    (new RecordMetric($data))->handle();
+    (new RecordMetric($data))->handle();
+
+    $metric = Metric::first();
+
+    expect($metric->source)->toBe('google');
+    expect($metric->country)->toBe('US');
+    expect($metric->value)->toBe(2);
+});
+
+it('cannot override core attributes with additional attributes', function () {
+    $data = new MetricData('page_views', additional: [
+        'name' => 'api_calls',
+        'category' => 'marketing',
+        'year' => 2025,
+        'month' => 1,
+        'day' => 1,
+        'measurable_type' => 'App\Models\User',
+        'measurable_id' => 1,
+        'value' => 100,
+    ]);
+
+    (new RecordMetric($data))->handle();
+
+    $recorded = Metric::first();
+
+    expect($recorded->name)->toBe('page_views')
+        ->and($recorded->category)->toBeNull()
+        ->and($recorded->year)->toBe(today()->year)
+        ->and($recorded->month)->toBe(today()->month)
+        ->and($recorded->day)->toBe(today()->day)
+        ->and($recorded->measurable_type)->toBeNull()
+        ->and($recorded->measurable_id)->toBeNull()
+        ->and($recorded->value)->toBe(1);
 });

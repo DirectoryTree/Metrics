@@ -23,16 +23,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['year', 'month', 'day']);
-
-            $table->unique([
-                'name',
-                'category',
-                'year',
-                'month',
-                'day',
-                'measurable_type',
-                'measurable_id',
-            ], 'metrics_unique');
         });
     }
 

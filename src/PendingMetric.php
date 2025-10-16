@@ -29,6 +29,13 @@ class PendingMetric
     protected ?Model $measurable = null;
 
     /**
+     * Additional attributes to store with the metric.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $additional = [];
+
+    /**
      * Constructor.
      */
     public function __construct(BackedEnum|string $name)
@@ -75,6 +82,18 @@ class PendingMetric
     }
 
     /**
+     * Set additional attributes to store with the metric.
+     *
+     * @param  array<string, mixed>  $attributes
+     */
+    public function with(array $attributes): self
+    {
+        $this->additional = $attributes;
+
+        return $this;
+    }
+
+    /**
      * Record the metric.
      */
     public function record(int $value = 1): void
@@ -94,7 +113,8 @@ class PendingMetric
             $this->category,
             $value,
             $this->date,
-            $this->measurable
+            $this->measurable,
+            $this->additional
         );
     }
 }

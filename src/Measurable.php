@@ -41,4 +41,9 @@ interface Measurable
      * Get the measurable model of the metric.
      */
     public function measurable(): ?Model;
+
+    /**
+     * Get the additional attributes of the metric.
+     */
+    public function additional(): array;
 }
