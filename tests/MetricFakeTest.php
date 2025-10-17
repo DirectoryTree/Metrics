@@ -123,7 +123,7 @@ it('can get all recorded metrics', function () {
     expect($recorded->count())->toBe(2);
 });
 
-it('commit clears recorded metrics', function () {
+it('commit returns count of recorded metrics', function () {
     $fake = new MetricFake;
 
     $fake->record(new MetricData('page_views'));
@@ -131,9 +131,10 @@ it('commit clears recorded metrics', function () {
 
     expect($fake->recorded()->count())->toBe(2);
 
-    $fake->commit();
+    $count = $fake->commit();
 
-    expect($fake->recorded()->count())->toBe(0);
+    expect($count)->toBe(2)
+        ->and($fake->recorded()->count())->toBe(2);
 });
 
 it('can start capturing', function () {
@@ -245,13 +246,15 @@ it('can record and commit multiple times', function () {
     $fake = new MetricFake;
 
     $fake->record(new MetricData('page_views'));
-    $fake->commit();
 
-    expect($fake->recorded()->count())->toBe(0);
+    $count = $fake->commit();
+
+    expect($count)->toBe(1)
+        ->and($fake->recorded()->count())->toBe(1);
 
     $fake->record(new MetricData('api_calls'));
 
-    expect($fake->recorded()->count())->toBe(1);
+    expect($fake->recorded()->count())->toBe(2);
 });
 
 it('assertion fails when metric not recorded', function () {
