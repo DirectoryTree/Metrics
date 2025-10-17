@@ -55,9 +55,9 @@ class RecordMetric implements ShouldQueue
                     'measurable_id' => $metric->measurable()?->getKey(),
                 ], ['value' => 0]);
 
-                $model->newQuery()->whereKey($instance->getKey())->update([
-                    'value' => $connection->raw('value + '.$value),
-                ]);
+                $model->newQuery()
+                    ->whereKey($instance)
+                    ->increment('value', $value);
             }
         );
     }
