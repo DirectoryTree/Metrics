@@ -30,6 +30,7 @@ class Metric extends Model
             'year' => 'integer',
             'month' => 'integer',
             'day' => 'integer',
+            'hour' => 'integer',
             'value' => 'integer',
         ];
     }

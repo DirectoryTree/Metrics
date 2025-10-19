@@ -38,6 +38,11 @@ interface Measurable
     public function day(): int;
 
     /**
+     * Get the hour of the metric.
+     */
+    public function hour(): ?int;
+
+    /**
      * Get the measurable model of the metric.
      */
     public function measurable(): ?Model;
