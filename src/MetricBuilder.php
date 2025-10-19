@@ -26,6 +26,22 @@ class MetricBuilder extends Builder
     }
 
     /**
+     * Get metrics for this hour.
+     */
+    public function thisHour(): self
+    {
+        return $this->onDateTime(now());
+    }
+
+    /**
+     * Get metrics for last hour.
+     */
+    public function lastHour(): self
+    {
+        return $this->onDateTime(now()->subHour());
+    }
+
+    /**
      * Get metrics for this week.
      */
     public function thisWeek(): self
@@ -161,6 +177,20 @@ class MetricBuilder extends Builder
     }
 
     /**
+     * Get metrics between two datetimes (including hours).
+     */
+    public function betweenDateTimes(CarbonInterface $start, CarbonInterface $end): self
+    {
+        return $this->whereRaw(
+            '(year, month, day, hour) >= (?, ?, ?, ?) AND (year, month, day, hour) <= (?, ?, ?, ?)',
+            [
+                $start->year, $start->month, $start->day, $start->hour,
+                $end->year,   $end->month,   $end->day,   $end->hour,
+            ]
+        );
+    }
+
+    /**
      * Get metrics on a specific date.
      */
     public function onDate(CarbonInterface $date): self
@@ -171,5 +201,13 @@ class MetricBuilder extends Builder
                 ->where('month', $date->month)
                 ->where('day', $date->day);
         });
+    }
+
+    /**
+     * Get metrics on a specific date and hour.
+     */
+    public function onDateTime(CarbonInterface $hour): self
+    {
+        return $this->onDate($hour)->where('hour', $hour->hour);
     }
 }
