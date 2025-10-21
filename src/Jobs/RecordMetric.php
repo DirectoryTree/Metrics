@@ -7,7 +7,6 @@ use DirectoryTree\Metrics\Measurable;
 use DirectoryTree\Metrics\Metric;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Collection;
 
@@ -42,23 +41,21 @@ class RecordMetric implements ShouldQueue
         /** @var \Illuminate\Database\Eloquent\Model $model */
         $model = new DatabaseMetricManager::$model;
 
-        $model->getConnection()->transaction(
-            function (ConnectionInterface $connection) use ($metric, $value, $model) {
-                $instance = $model->newQuery()->firstOrCreate([
-                    ...$metric->additional(),
-                    'name' => $metric->name(),
-                    'category' => $metric->category(),
-                    'year' => $metric->year(),
-                    'month' => $metric->month(),
-                    'day' => $metric->day(),
-                    'measurable_type' => $metric->measurable()?->getMorphClass(),
-                    'measurable_id' => $metric->measurable()?->getKey(),
-                ], ['value' => 0]);
+        $model->getConnection()->transaction(function () use ($metric, $value, $model) {
+            $instance = $model->newQuery()->firstOrCreate([
+                ...$metric->additional(),
+                'name' => $metric->name(),
+                'category' => $metric->category(),
+                'year' => $metric->year(),
+                'month' => $metric->month(),
+                'day' => $metric->day(),
+                'measurable_type' => $metric->measurable()?->getMorphClass(),
+                'measurable_id' => $metric->measurable()?->getKey(),
+            ], ['value' => 0]);
 
-                $model->newQuery()
-                    ->whereKey($instance)
-                    ->increment('value', $value);
-            }
-        );
+            $model->newQuery()
+                ->whereKey($instance)
+                ->increment('value', $value);
+        });
     }
 }
