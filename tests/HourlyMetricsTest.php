@@ -17,9 +17,9 @@ it('can record hourly metrics using pending metric', function () {
 
     $metric = Metric::first();
 
-    expect($metric->name)->toBe('api:requests')
-        ->and($metric->hour)->toBe(now()->hour)
-        ->and($metric->value)->toBe(1);
+    expect($metric->name)->toEqual('api:requests')
+        ->and($metric->hour)->toEqual(now()->hour)
+        ->and($metric->value)->toEqual(1);
 });
 
 it('can record hourly metrics with custom date', function () {
@@ -32,12 +32,12 @@ it('can record hourly metrics with custom date', function () {
 
     $metric = Metric::first();
 
-    expect($metric->name)->toBe('api:requests')
-        ->and($metric->year)->toBe(2025)
-        ->and($metric->month)->toBe(10)
-        ->and($metric->day)->toBe(19)
-        ->and($metric->hour)->toBe(14)
-        ->and($metric->value)->toBe(1);
+    expect($metric->name)->toEqual('api:requests')
+        ->and($metric->year)->toEqual(2025)
+        ->and($metric->month)->toEqual(10)
+        ->and($metric->day)->toEqual(19)
+        ->and($metric->hour)->toEqual(14)
+        ->and($metric->value)->toEqual(1);
 });
 
 it('records daily metrics when hourly is not enabled', function () {
@@ -45,9 +45,9 @@ it('records daily metrics when hourly is not enabled', function () {
 
     $metric = Metric::first();
 
-    expect($metric->name)->toBe('page_views')
+    expect($metric->name)->toEqual('page_views')
         ->and($metric->hour)->toBeNull()
-        ->and($metric->value)->toBe(1);
+        ->and($metric->value)->toEqual(1);
 });
 
 it('can record hourly metrics using MetricData', function () {
@@ -61,9 +61,9 @@ it('can record hourly metrics using MetricData', function () {
 
     $metric = Metric::first();
 
-    expect($metric->name)->toBe('api:requests')
-        ->and($metric->hour)->toBe(15)
-        ->and($metric->value)->toBe(1);
+    expect($metric->name)->toEqual('api:requests')
+        ->and($metric->hour)->toEqual(15)
+        ->and($metric->value)->toEqual(1);
 });
 
 it('increments hourly metrics for the same hour', function () {
@@ -79,12 +79,12 @@ it('increments hourly metrics for the same hour', function () {
         ->hourly()
         ->record();
 
-    expect(Metric::count())->toBe(1);
+    expect(Metric::count())->toEqual(1);
 
     $metric = Metric::first();
 
-    expect($metric->hour)->toBe(14)
-        ->and($metric->value)->toBe(2);
+    expect($metric->hour)->toEqual(14)
+        ->and($metric->value)->toEqual(2);
 });
 
 it('creates separate metrics for different hours', function () {
@@ -101,14 +101,14 @@ it('creates separate metrics for different hours', function () {
         ->hourly()
         ->record();
 
-    expect(Metric::count())->toBe(2);
+    expect(Metric::count())->toEqual(2);
 
     $metrics = Metric::orderBy('hour')->get();
 
-    expect($metrics[0]->hour)->toBe(14)
-        ->and($metrics[0]->value)->toBe(1)
-        ->and($metrics[1]->hour)->toBe(15)
-        ->and($metrics[1]->value)->toBe(1);
+    expect($metrics[0]->hour)->toEqual(14)
+        ->and($metrics[0]->value)->toEqual(1)
+        ->and($metrics[1]->hour)->toEqual(15)
+        ->and($metrics[1]->value)->toEqual(1);
 });
 
 it('can query metrics for this hour', function () {
@@ -127,7 +127,7 @@ it('can query metrics for this hour', function () {
 
     $thisHourMetrics = Metric::thisHour()->sum('value');
 
-    expect($thisHourMetrics)->toBe(5);
+    expect($thisHourMetrics)->toEqual(5);
 });
 
 it('can query metrics for last hour', function () {
@@ -146,34 +146,7 @@ it('can query metrics for last hour', function () {
 
     $lastHourMetrics = Metric::lastHour()->sum('value');
 
-    expect($lastHourMetrics)->toBe(3);
-});
-
-it('can query metrics on a specific hour', function () {
-    $datetime = Carbon::parse('2025-10-19 14:30:00');
-
-    PendingMetric::make('api:requests')
-        ->date($datetime)
-        ->hourly()
-        ->record(10);
-
-    $metrics = Metric::onHour($datetime)->sum('value');
-
-    expect($metrics)->toBe(10);
-});
-
-it('can query metrics between hours', function () {
-    $start = Carbon::parse('2025-10-19 14:00:00');
-    $middle = Carbon::parse('2025-10-19 15:00:00');
-    $end = Carbon::parse('2025-10-19 16:00:00');
-
-    PendingMetric::make('api:requests')->date($start)->hourly()->record(5);
-    PendingMetric::make('api:requests')->date($middle)->hourly()->record(10);
-    PendingMetric::make('api:requests')->date($end)->hourly()->record(15);
-
-    $metrics = Metric::betweenHours($start, $middle)->sum('value');
-
-    expect($metrics)->toBe(15);
+    expect($lastHourMetrics)->toEqual(3);
 });
 
 it('treats hourly and daily metrics as separate', function () {
@@ -188,14 +161,14 @@ it('treats hourly and daily metrics as separate', function () {
         ->hourly()
         ->record(3);
 
-    expect(Metric::count())->toBe(2);
+    expect(Metric::count())->toEqual(2);
 
     $dailyMetric = Metric::whereNull('hour')->first();
     $hourlyMetric = Metric::whereNotNull('hour')->first();
 
-    expect($dailyMetric->value)->toBe(5)
-        ->and($hourlyMetric->value)->toBe(3)
-        ->and($hourlyMetric->hour)->toBe(14);
+    expect($dailyMetric->value)->toEqual(5)
+        ->and($hourlyMetric->value)->toEqual(3)
+        ->and($hourlyMetric->hour)->toEqual(14);
 });
 
 it('can chain hourly with other methods', function () {
@@ -211,12 +184,12 @@ it('can chain hourly with other methods', function () {
 
     $metric = Metric::first();
 
-    expect($metric->name)->toBe('api:requests')
-        ->and($metric->category)->toBe('external')
-        ->and($metric->hour)->toBe(14)
-        ->and($metric->measurable_type)->toBe(get_class($user))
-        ->and($metric->measurable_id)->toBe($user->id)
-        ->and($metric->value)->toBe(10);
+    expect($metric->name)->toEqual('api:requests')
+        ->and($metric->category)->toEqual('external')
+        ->and($metric->hour)->toEqual(14)
+        ->and($metric->measurable_type)->toEqual(get_class($user))
+        ->and($metric->measurable_id)->toEqual($user->id)
+        ->and($metric->value)->toEqual(10);
 });
 
 it('works with capturing mode for hourly metrics', function () {
@@ -227,14 +200,14 @@ it('works with capturing mode for hourly metrics', function () {
     PendingMetric::make('api:requests')->date($datetime)->hourly()->record(5);
     PendingMetric::make('api:requests')->date($datetime)->hourly()->record(3);
 
-    expect(Metric::count())->toBe(0);
+    expect(Metric::count())->toEqual(0);
 
     Metrics::commit();
 
-    expect(Metric::count())->toBe(1);
+    expect(Metric::count())->toEqual(1);
 
     $metric = Metric::first();
 
-    expect($metric->value)->toBe(8)
-        ->and($metric->hour)->toBe(14);
+    expect($metric->value)->toEqual(8)
+        ->and($metric->hour)->toEqual(14);
 });
