@@ -27,8 +27,10 @@ Track page views, API calls, user signups, or any other countable events.
   - [Using the Redis Driver](#using-the-redis-driver)
 - [Usage](#usage)
   - [Recording Metrics](#recording-metrics)
+  - [Recording with Values](#recording-with-values)
   - [Recording with Categories](#recording-with-categories)
   - [Recording with Dates](#recording-with-dates)
+  - [Recording Hourly Metrics](#recording-hourly-metrics)
   - [Recording for Models](#recording-for-models)
   - [Recording with Custom Attributes](#recording-with-custom-attributes)
   - [Capturing & Committing](#capturing--committing)
@@ -148,7 +150,7 @@ Which ever method you use, metrics are recorded in the same way. Use whichever y
 
 For the rest of the documentation, we will use the `metric` helper for consistency and brevity.
 
-### Metric Values
+### Recording with Values
 
 By default, metrics have a value of `1`. You may specify a custom value in the `record` method:
 
@@ -206,6 +208,61 @@ metric('jobs:completed')
     ->date(Carbon::yesterday())
     ->record(1250);
 ```
+
+### Recording Hourly Metrics
+
+By default, metrics are recorded at the **daily** level. For metrics that require hour-level granularity, you may use the `hourly()` method:
+
+```php
+// Track API requests by hour
+metric('api:requests')
+    ->hourly()
+    ->record();
+```
+
+Hourly metrics include the hour (0-23) in addition to the year, month, and day, allowing you to track metrics at a more granular level:
+
+```php
+use Carbon\Carbon;
+
+// Record API requests for a specific hour
+metric('api:requests')
+    ->date(Carbon::parse('2025-10-19 14:30:00'))
+    ->hourly()
+    ->record();
+
+// This will be stored with hour = 14
+```
+
+Hourly metrics are stored separately from daily metrics, even for the same metric name:
+
+```php
+metric('page:views')->record();         // Daily metric (hour = null)
+metric('page:views')->hourly()->record(); // Hourly metric (hour = current hour)
+```
+
+You can query hourly metrics using the `thisHour()`, `lastHour()`, and `onDateTime()` methods:
+
+```php
+use DirectoryTree\Metrics\Metric;
+
+// Get metrics for this hour
+$metrics = Metric::thisHour()->get();
+
+// Get metrics for last hour
+$metrics = Metric::lastHour()->get();
+
+// Get metrics for a specific date and hour
+$metrics = Metric::onDateTime(Carbon::parse('2025-10-19 14:00:00'))->get();
+
+// Get API requests for the current hour
+$requests = Metric::thisHour()
+    ->where('name', 'api:requests')
+    ->sum('value');
+```
+
+> [!tip]
+> Use hourly metrics sparingly, as they create 24x more database rows than daily metrics. Reserve hourly tracking for metrics that genuinely benefit from hour-level granularity.
 
 ### Recording for Models
 
@@ -300,16 +357,16 @@ metric('api:requests')
 Custom attributes are included in the metric's uniqueness check, meaning metrics with different attribute values are stored separately:
 
 ```php
-metric('page_views')->with(['source' => 'google'])->record();   // Creates metric #1
-metric('page_views')->with(['source' => 'facebook'])->record(); // Creates metric #2
-metric('page_views')->with(['source' => 'google'])->record();   // Increments metric #1
+metric('page:views')->with(['source' => 'google'])->record();   // Creates metric #1
+metric('page:views')->with(['source' => 'facebook'])->record(); // Creates metric #2
+metric('page:views')->with(['source' => 'google'])->record();   // Increments metric #1
 ```
 
 This allows you to segment and analyze metrics by any dimension:
 
 ```php
 // Get page views by source
-$googleViews = Metric::where('name', 'page_views')
+$googleViews = Metric::where('name', 'page:views')
     ->where('source', 'google')
     ->sum('value');
 
@@ -322,7 +379,7 @@ $conversions = Metric::thisMonth()
 
 // Get mobile vs desktop traffic
 $mobileViews = Metric::today()
-    ->where('name', 'page_views')
+    ->where('name', 'page:views')
     ->where('device', 'mobile')
     ->sum('value');
 ```
@@ -334,7 +391,7 @@ use DirectoryTree\Metrics\MetricData;
 use DirectoryTree\Metrics\Facades\Metrics;
 
 Metrics::record(new MetricData(
-    name: 'page_views',
+    name: 'page:views',
     additional: [
         'source' => 'google',
         'country' => 'US',
@@ -347,7 +404,7 @@ Or with the `PendingMetric` class:
 ```php
 use DirectoryTree\Metrics\PendingMetric;
 
-PendingMetric::make('page_views')
+PendingMetric::make('page:views')
     ->with(['source' => 'google', 'country' => 'US'])
     ->record();
 ```
