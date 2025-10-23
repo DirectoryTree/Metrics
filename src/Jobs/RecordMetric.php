@@ -49,7 +49,7 @@ class RecordMetric implements ShouldQueue
                 'year' => $metric->year(),
                 'month' => $metric->month(),
                 'day' => $metric->day(),
-                'hour' => $metric->hour(),
+                ...(is_null($metric->hour()) ? [] : ['hour' => $metric->hour()]),
                 'measurable_type' => $metric->measurable()?->getMorphClass(),
                 'measurable_id' => $metric->measurable()?->getKey(),
             ], ['value' => 0]);
