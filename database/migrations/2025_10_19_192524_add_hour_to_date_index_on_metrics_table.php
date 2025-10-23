@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('metrics', function (Blueprint $table) {
-            $table->unsignedTinyInteger('hour')->nullable()->after('day');
+            $table->dropIndex(['year', 'month', 'day']);
+            $table->index(['year', 'month', 'day', 'hour']);
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('metrics', function (Blueprint $table) {
-            $table->dropColumn('hour');
+            $table->dropIndex(['year', 'month', 'day', 'hour']);
+            $table->index(['year', 'month', 'day']);
         });
     }
 };
