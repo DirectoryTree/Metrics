@@ -34,8 +34,15 @@ class ArrayMetricRepository implements MetricRepository
                 $metric->name(),
                 $metric->category(),
                 $existing->value() + $metric->value(),
-                CarbonImmutable::create($existing->year(), $existing->month(), $existing->day()),
-                $metric->measurable()
+                CarbonImmutable::create(
+                    $existing->year(),
+                    $existing->month(),
+                    $existing->day(),
+                    $existing->hour() ?? 0
+                ),
+                $metric->measurable(),
+                $metric->additional(),
+                $existing->hour() !== null
             );
         } else {
             $this->metrics[$key] = $metric;

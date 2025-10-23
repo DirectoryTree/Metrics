@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Redis;
 beforeEach(function () {
     Queue::fake();
     Redis::flushdb();
+
+    config(['metrics.queue' => false]);
 });
 
 it('displays message when no metrics to commit', function () {
@@ -25,8 +27,6 @@ it('displays message when no metrics to commit', function () {
 });
 
 it('commits captured metrics without queueing', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
     Metrics::record(new MetricData('page_views'));
@@ -62,8 +62,6 @@ it('commits captured metrics with queueing enabled', function () {
 });
 
 it('displays singular message for one metric', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
 
@@ -75,8 +73,6 @@ it('displays singular message for one metric', function () {
 });
 
 it('displays plural message for multiple metrics', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
     Metrics::record(new MetricData('api_calls'));
@@ -90,8 +86,6 @@ it('displays plural message for multiple metrics', function () {
 });
 
 it('flushes repository after committing', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
 
@@ -109,8 +103,6 @@ it('flushes repository after committing', function () {
 });
 
 it('commits metrics with categories', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('page_views', 'marketing'));
     Metrics::record(new MetricData('page_views', 'analytics'));
@@ -127,8 +119,6 @@ it('commits metrics with categories', function () {
 });
 
 it('commits metrics with measurable models', function () {
-    config(['metrics.queue' => false]);
-
     $user1 = createUser(['name' => 'John', 'email' => 'john@example.com']);
     $user2 = createUser(['name' => 'Jane', 'email' => 'jane@example.com']);
 
@@ -148,8 +138,6 @@ it('commits metrics with measurable models', function () {
 });
 
 it('commits large number of metrics', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
 
     for ($i = 0; $i < 100; $i++) {
@@ -165,8 +153,6 @@ it('commits large number of metrics', function () {
 });
 
 it('can be run multiple times', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
 
@@ -184,8 +170,6 @@ it('can be run multiple times', function () {
 });
 
 it('works when capturing is not enabled', function () {
-    config(['metrics.queue' => false]);
-
     // Record without capturing
     Metrics::record(new MetricData('page_views'));
 
@@ -198,8 +182,6 @@ it('works when capturing is not enabled', function () {
 });
 
 it('commits metrics with custom values', function () {
-    config(['metrics.queue' => false]);
-
     Metrics::capture();
     Metrics::record(new MetricData('revenue', value: 100));
     Metrics::record(new MetricData('revenue', value: 250));
@@ -214,8 +196,6 @@ it('commits metrics with custom values', function () {
 });
 
 it('commits metrics with different dates separately', function () {
-    config(['metrics.queue' => false]);
-
     $today = now();
     $yesterday = now()->subDay();
 
@@ -231,8 +211,6 @@ it('commits metrics with different dates separately', function () {
 });
 
 it('handles metrics with all properties', function () {
-    config(['metrics.queue' => false]);
-
     $user = createUser();
     $date = now();
 
@@ -253,8 +231,6 @@ it('handles metrics with all properties', function () {
 });
 
 it('works with redis repository', function () {
-    config(['metrics.queue' => false]);
-
     // Bind Redis repository
     $this->app->singleton(
         MetricRepository::class,
