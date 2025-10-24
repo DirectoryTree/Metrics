@@ -23,6 +23,8 @@ class MetricData implements Measurable
         protected ?Model $measurable = null,
         protected array $additional = [],
         protected bool $hourly = false,
+        /** @var @var class-string<\Illuminate\Database\Eloquent\Model> */
+        protected string $databaseModel = DatabaseMetricManager::$model,
     ) {
         $this->date ??= new CarbonImmutable;
     }
@@ -97,5 +99,13 @@ class MetricData implements Measurable
     public function additional(): array
     {
         return $this->additional;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function databaseModel(): string
+    {
+        return $this->databaseModel;
     }
 }

@@ -38,8 +38,9 @@ class RecordMetric implements ShouldQueue
             fn (Measurable $metric) => $metric->value()
         );
 
+        $modelClass = $metric->databaseModel();
         /** @var \Illuminate\Database\Eloquent\Model $model */
-        $model = new DatabaseMetricManager::$model;
+        $model = new $modelClass;
 
         $model->getConnection()->transaction(function () use ($metric, $value, $model) {
             $instance = $model->newQuery()->firstOrCreate([

@@ -42,7 +42,8 @@ class ArrayMetricRepository implements MetricRepository
                 ),
                 $metric->measurable(),
                 $metric->additional(),
-                $existing->hour() !== null
+                $existing->hour() !== null,
+                $metric->databaseModel(),
             );
         } else {
             $this->metrics[$key] = $metric;

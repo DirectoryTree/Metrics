@@ -59,6 +59,7 @@ class JsonMeasurableEncoder implements MeasurableEncoder
             measurable: $model,
             additional: $attributes['additional'] ?? [],
             hourly: $attributes['hour'] ?? false,
+            databaseModel: $attributes['databaseModel'] ?? DatabaseMetricManager::$model,
         );
     }
 }

@@ -34,6 +34,12 @@ class PendingMetric
     protected bool $trackHourly = false;
 
     /**
+     * The database model of the metric.
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected string $databaseModel = DatabaseMetricManager::$model;
+
+    /**
      * Additional attributes to store with the metric.
      *
      * @var array<string, mixed>
@@ -97,6 +103,18 @@ class PendingMetric
     }
 
     /**
+     * Set the measurable model of the metric.
+     * 
+     * @param class-string<\Illuminate\Database\Eloquent\Model> $model
+     */
+    public function databaseModel(string $databaseModel): self
+    {
+        $this->databaseModel = $databaseModel;
+
+        return $this;
+    }
+
+    /**
      * Set additional attributes to store with the metric.
      *
      * @param  array<string, mixed>  $attributes
@@ -130,7 +148,8 @@ class PendingMetric
             $this->date,
             $this->measurable,
             $this->additional,
-            $this->trackHourly
+            $this->trackHourly,
+            $this->databaseModel,
         );
     }
 }

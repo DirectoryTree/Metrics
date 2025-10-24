@@ -51,4 +51,11 @@ interface Measurable
      * Get the additional attributes of the metric.
      */
     public function additional(): array;
+
+    /**
+     * Get the database model of the metric.
+     * 
+     * @return class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    public function databaseModel(): string;
 }
