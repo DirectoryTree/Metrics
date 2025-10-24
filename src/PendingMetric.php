@@ -29,6 +29,11 @@ class PendingMetric
     protected ?Model $measurable = null;
 
     /**
+     * The model to use for the metric.
+     */
+    protected ?string $model = null;
+
+    /**
      * Whether to track hourly metrics.
      */
     protected bool $trackHourly = false;
@@ -87,6 +92,16 @@ class PendingMetric
     }
 
     /**
+     * Set the model to use for the metric.
+     */
+    public function using(string $model): self
+    {
+        $this->model = $model;
+
+        return $this;
+    }
+
+    /**
      * Enable hourly tracking for the metric.
      */
     public function hourly(): self
@@ -130,7 +145,8 @@ class PendingMetric
             $this->date,
             $this->measurable,
             $this->additional,
-            $this->trackHourly
+            $this->trackHourly,
+            $this->model,
         );
     }
 }

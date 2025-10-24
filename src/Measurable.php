@@ -43,6 +43,11 @@ interface Measurable
     public function hour(): ?int;
 
     /**
+     * Get the model class of the metric.
+     */
+    public function model(): ?string;
+
+    /**
      * Get the measurable model of the metric.
      */
     public function measurable(): ?Model;
