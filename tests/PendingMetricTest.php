@@ -42,6 +42,14 @@ it('can set date', function () {
         ->and($data->day())->toBe($date->day);
 });
 
+it('can set model', function () {
+    $pending = PendingMetric::make('page_views')->model('CustomMetric');
+
+    $data = $pending->toMetricData(1);
+
+    expect($data->model())->toBe('CustomMetric');
+});
+
 it('can set measurable', function () {
     $user = createUser();
 
