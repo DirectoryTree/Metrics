@@ -92,9 +92,9 @@ class PendingMetric
     }
 
     /**
-     * Set the model to use for the metric.
+     * Set the metric model to use.
      */
-    public function using(string $model): self
+    public function model(string $model): self
     {
         $this->model = $model;
 
