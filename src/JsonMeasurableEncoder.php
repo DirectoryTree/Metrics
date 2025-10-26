@@ -12,7 +12,7 @@ class JsonMeasurableEncoder implements MeasurableEncoder
      */
     public function encode(Measurable $metric): string
     {
-        $model = $metric->measurable();
+        $measurable = $metric->measurable();
 
         return json_encode([
             'name' => Enum::value($metric->name()),
@@ -21,9 +21,10 @@ class JsonMeasurableEncoder implements MeasurableEncoder
             'month' => $metric->month(),
             'day' => $metric->day(),
             'hour' => $metric->hour(),
-            'measurable' => $model ? get_class($model) : null,
-            'measurable_key' => $model?->getKeyName() ?? null,
-            'measurable_id' => $model?->getKey() ?? null,
+            'model' => $metric->model(),
+            'measurable' => $measurable ? get_class($measurable) : null,
+            'measurable_key' => $measurable?->getKeyName() ?? null,
+            'measurable_id' => $measurable?->getKey() ?? null,
             'additional' => $metric->additional(),
         ]);
     }
@@ -36,12 +37,12 @@ class JsonMeasurableEncoder implements MeasurableEncoder
         $attributes = json_decode($key, true);
 
         if ($attributes['measurable'] && class_exists($attributes['measurable'])) {
-            /** @var \Illuminate\Database\Eloquent\Model $model */
-            $model = (new $attributes['measurable'])->newFromBuilder([
+            /** @var \Illuminate\Database\Eloquent\Model $measurable */
+            $measurable = (new $attributes['measurable'])->newFromBuilder([
                 $attributes['measurable_key'] => $attributes['measurable_id'],
             ]);
         } else {
-            $model = null;
+            $measurable = null;
         }
 
         $date = CarbonImmutable::create(
@@ -56,9 +57,10 @@ class JsonMeasurableEncoder implements MeasurableEncoder
             category: $attributes['category'],
             value: $value,
             date: $date,
-            measurable: $model,
+            measurable: $measurable,
             additional: $attributes['additional'] ?? [],
             hourly: $attributes['hour'] ?? false,
+            model: $attributes['model'] ?? null,
         );
     }
 }

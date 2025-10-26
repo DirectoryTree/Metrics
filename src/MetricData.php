@@ -23,6 +23,7 @@ class MetricData implements Measurable
         protected ?Model $measurable = null,
         protected array $additional = [],
         protected bool $hourly = false,
+        protected ?string $model = null,
     ) {
         $this->date ??= new CarbonImmutable;
     }
@@ -81,6 +82,14 @@ class MetricData implements Measurable
     public function hour(): ?int
     {
         return $this->hourly ? $this->date->hour : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function model(): ?string
+    {
+        return $this->model;
     }
 
     /**
