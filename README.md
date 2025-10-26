@@ -678,7 +678,9 @@ public function boot(): void
 
 #### Per-Metric Custom Model
 
-To use different metric models for different metrics, use the `model()` method on `PendingMetric`:
+To use different metric models for different metrics, use the `model()` method on `PendingMetric`.
+
+Keep in mind you will have to duplicate the `metrics` table and its columns for each custom model:
 
 ```php
 use App\Models\ApiMetric;
