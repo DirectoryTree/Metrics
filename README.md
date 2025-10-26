@@ -659,14 +659,21 @@ class CustomMetric extends Model
 }
 ```
 
-Once you have created your custom model, you may set it as the default using the `useModel()` method on the `DatabaseMetricManager`:
+Once you have created your custom model, you may set it as the default using the `useModel()` method on the `DatabaseMetricManager`.
+
+This is typically done in your `AppServiceProvider`:
 
 ```php
 use App\Models\CustomMetric;
 use DirectoryTree\Metrics\DatabaseMetricManager;
 
-// In your AppServiceProvider boot method
-DatabaseMetricManager::useModel(CustomMetric::class);
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    DatabaseMetricManager::useModel(CustomMetric::class);
+}
 ```
 
 #### Per-Metric Custom Model
