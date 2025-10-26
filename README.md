@@ -37,6 +37,9 @@ Track page views, API calls, user signups, or any other countable events.
   - [Querying Metrics](#querying-metrics)
 - [Testing](#testing)
 - [Extending & Customizing](#extending--customizing)
+  - [Custom Metric Models](#custom-metric-models)
+  - [Custom Metric Repository](#custom-metric-repository)
+  - [Custom Metric Manager](#custom-metric-manager)
 
 ## Requirements
 
@@ -621,6 +624,73 @@ $userEndpoint = Metrics::recorded(fn ($metric) =>
 ```
 
 ## Extending & Customizing
+
+### Custom Metric Models
+
+By default, metrics are stored using the included `DirectoryTree\Metrics\Metric` model. You may use a custom model globally or per-metric.
+
+#### Global Custom Model
+
+To use a custom metric model for all metrics, you may create your own model instance with the below requirements:
+
+1. Be fully unguarded (so the model can `fill`'ed appropriately)
+2. Include the same columns as the default `metrics` table
+3. Include the same casts as the default `Metric` model
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class CustomMetric extends Model
+{
+    protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return [
+            'year' => 'integer',
+            'month' => 'integer',
+            'day' => 'integer',
+            'hour' => 'integer',
+            'value' => 'integer',
+        ];
+    }
+}
+```
+
+Once you have created your custom model, you may set it as the default using the `useModel()` method on the `DatabaseMetricManager`:
+
+```php
+use App\Models\CustomMetric;
+use DirectoryTree\Metrics\DatabaseMetricManager;
+
+// In your AppServiceProvider boot method
+DatabaseMetricManager::useModel(CustomMetric::class);
+```
+
+#### Per-Metric Custom Model
+
+To use different metric models for different metrics, use the `model()` method on `PendingMetric`:
+
+```php
+use App\Models\ApiMetric;
+use App\Models\UserMetric;
+
+// Store API metrics in a separate table
+metric('requests')
+    ->model(ApiMetric::class)
+    ->record();
+
+// Store user metrics in another table
+metric('user:logins')
+    ->model(UserMetric::class)
+    ->with(['user_id' => Auth::id()])
+    ->record();
+
+// Use the default model
+metric('page:views')->record();
+```
 
 ### Custom Metric Manager
 
