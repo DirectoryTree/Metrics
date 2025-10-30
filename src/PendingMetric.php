@@ -56,15 +56,15 @@ class PendingMetric
     /**
      * Create a new pending metric.
      */
-    public static function make(BackedEnum|string $name): self
+    public static function make(BackedEnum|string $name): static
     {
-        return new self($name);
+        return new static($name);
     }
 
     /**
      * Set the category of the metric.
      */
-    public function category(BackedEnum|string|null $category): self
+    public function category(BackedEnum|string|null $category): static
     {
         $this->category = $category;
 
@@ -74,7 +74,7 @@ class PendingMetric
     /**
      * Set the date of the metric.
      */
-    public function date(CarbonInterface $date): self
+    public function date(CarbonInterface $date): static
     {
         $this->date = $date;
 
@@ -84,7 +84,7 @@ class PendingMetric
     /**
      * Set the measurable model of the metric.
      */
-    public function measurable(Model $measurable): self
+    public function measurable(Model $measurable): static
     {
         $this->measurable = $measurable;
 
@@ -94,7 +94,7 @@ class PendingMetric
     /**
      * Set the metric model to use.
      */
-    public function model(string $model): self
+    public function model(string $model): static
     {
         $this->model = $model;
 
@@ -104,7 +104,7 @@ class PendingMetric
     /**
      * Enable hourly tracking for the metric.
      */
-    public function hourly(): self
+    public function hourly(): static
     {
         $this->trackHourly = true;
 
@@ -116,7 +116,7 @@ class PendingMetric
      *
      * @param  array<string, mixed>  $attributes
      */
-    public function with(array $attributes): self
+    public function with(array $attributes): static
     {
         $this->additional = $attributes;
 
