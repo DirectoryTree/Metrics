@@ -5,7 +5,7 @@ namespace DirectoryTree\Metrics\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
-class MetricsTableCommand extends Command
+class MakeMetricsTable extends Command
 {
     /**
      * The name and signature of the console command.

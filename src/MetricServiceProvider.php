@@ -3,7 +3,7 @@
 namespace DirectoryTree\Metrics;
 
 use DirectoryTree\Metrics\Commands\CommitMetrics;
-use DirectoryTree\Metrics\Commands\MetricsTableCommand;
+use DirectoryTree\Metrics\Commands\MakeMetricsTable;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Queue;
@@ -39,7 +39,7 @@ class MetricServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CommitMetrics::class,
-                MetricsTableCommand::class,
+                MakeMetricsTable::class,
             ]);
         }
 
