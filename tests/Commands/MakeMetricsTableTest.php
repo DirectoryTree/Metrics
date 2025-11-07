@@ -3,23 +3,25 @@
 use DirectoryTree\Metrics\Commands\MakeMetricsTable;
 use Orchestra\Testbench\Concerns\InteractsWithPublishedFiles;
 
+use function Pest\Laravel\artisan;
+
 uses(InteractsWithPublishedFiles::class);
 
 it('creates a migration file with the correct name', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileExists('*_create_test_metrics_table.php');
 });
 
 it('displays success message with migration name', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'user_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'user_metrics'])
         ->expectsOutputToContain('created successfully')
         ->assertSuccessful();
 });
 
 it('generates migration with correct table name in schema', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'custom_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'custom_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileContains([
@@ -29,7 +31,7 @@ it('generates migration with correct table name in schema', function () {
 });
 
 it('generates migration with all required columns', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileContains([
@@ -47,7 +49,7 @@ it('generates migration with all required columns', function () {
 });
 
 it('generates migration with correct index', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileContains([
@@ -56,7 +58,7 @@ it('generates migration with correct index', function () {
 });
 
 it('generates migration with up and down methods', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileContains([
@@ -66,19 +68,19 @@ it('generates migration with up and down methods', function () {
 });
 
 it('creates migration file with timestamp prefix', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileExists('*_create_test_metrics_table.php');
 });
 
 it('can generate multiple different metrics tables', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'user_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'user_metrics'])
         ->assertSuccessful();
 
     sleep(1); // Ensure different timestamp
 
-    $this->artisan(MakeMetricsTable::class, ['name' => 'custom_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'custom_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileExists('*_create_user_metrics_table.php');
@@ -94,7 +96,7 @@ it('can generate multiple different metrics tables', function () {
 });
 
 it('generates valid php migration file', function () {
-    $this->artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
+    artisan(MakeMetricsTable::class, ['name' => 'test_metrics'])
         ->assertSuccessful();
 
     $this->assertMigrationFileContains([
