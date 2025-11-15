@@ -11,6 +11,8 @@ use DirectoryTree\Metrics\Tests\User;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 
+use function Pest\Laravel\artisan;
+
 beforeEach(function () {
     Queue::fake();
     Redis::flushdb();
@@ -19,7 +21,7 @@ beforeEach(function () {
 });
 
 it('displays message when no metrics to commit', function () {
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('No metrics to commit.')
         ->assertSuccessful();
 
@@ -34,7 +36,7 @@ it('commits captured metrics without queueing', function () {
 
     expect(Metric::count())->toBe(0);
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 2 metric(s).')
         ->assertSuccessful();
 
@@ -52,7 +54,7 @@ it('commits captured metrics with queueing enabled', function () {
     Metrics::record(new MetricData('page_views'));
     Metrics::record(new MetricData('api_calls'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 2 metric(s).')
         ->assertSuccessful();
 
@@ -65,7 +67,7 @@ it('displays singular message for one metric', function () {
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 1 metric(s).')
         ->assertSuccessful();
 
@@ -78,7 +80,7 @@ it('displays plural message for multiple metrics', function () {
     Metrics::record(new MetricData('api_calls'));
     Metrics::record(new MetricData('logins'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 3 metric(s).')
         ->assertSuccessful();
 
@@ -89,13 +91,13 @@ it('flushes repository after committing', function () {
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->assertSuccessful();
 
     expect(Metric::count())->toBe(1);
 
     // Running again should show no metrics
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('No metrics to commit.')
         ->assertSuccessful();
 
@@ -108,7 +110,7 @@ it('commits metrics with categories', function () {
     Metrics::record(new MetricData('page_views', 'analytics'));
     Metrics::record(new MetricData('api_calls'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 3 metric(s).')
         ->assertSuccessful();
 
@@ -127,7 +129,7 @@ it('commits metrics with measurable models', function () {
     Metrics::record(new MetricData('logins', measurable: $user2));
     Metrics::record(new MetricData('logins'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 3 metric(s).')
         ->assertSuccessful();
 
@@ -144,7 +146,7 @@ it('commits large number of metrics', function () {
         Metrics::record(new MetricData('page_views'));
     }
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 1 metric(s).')
         ->assertSuccessful();
 
@@ -156,13 +158,13 @@ it('can be run multiple times', function () {
     Metrics::capture();
     Metrics::record(new MetricData('page_views'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 1 metric(s).')
         ->assertSuccessful();
 
     Metrics::record(new MetricData('api_calls'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 1 metric(s).')
         ->assertSuccessful();
 
@@ -173,7 +175,7 @@ it('works when capturing is not enabled', function () {
     // Record without capturing
     Metrics::record(new MetricData('page_views'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('No metrics to commit.')
         ->assertSuccessful();
 
@@ -187,7 +189,7 @@ it('commits metrics with custom values', function () {
     Metrics::record(new MetricData('revenue', value: 250));
     Metrics::record(new MetricData('revenue', value: 50));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 1 metric(s).')
         ->assertSuccessful();
 
@@ -203,7 +205,7 @@ it('commits metrics with different dates separately', function () {
     Metrics::record(new MetricData('page_views', date: $today));
     Metrics::record(new MetricData('page_views', date: $yesterday));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 2 metric(s).')
         ->assertSuccessful();
 
@@ -217,7 +219,7 @@ it('handles metrics with all properties', function () {
     Metrics::capture();
     Metrics::record(new MetricData('page_views', 'marketing', value: 5, date: $date, measurable: $user));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 1 metric(s).')
         ->assertSuccessful();
 
@@ -242,7 +244,7 @@ it('works with redis repository', function () {
     Metrics::record(new MetricData('page_views'));
     Metrics::record(new MetricData('api_calls'));
 
-    $this->artisan(CommitMetrics::class)
+    artisan(CommitMetrics::class)
         ->expectsOutput('Committed 2 metric(s).')
         ->assertSuccessful();
 
