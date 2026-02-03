@@ -37,6 +37,8 @@ class Metric extends Model
 
     /**
      * Create a new Eloquent query builder for the model.
+     *
+     * @return MetricBuilder<static>
      */
     public function newEloquentBuilder($query): MetricBuilder
     {
