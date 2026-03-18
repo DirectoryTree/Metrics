@@ -18,17 +18,25 @@ jobs:
                 php: [8.1, 8.2, 8.3, 8.4]
                 include:
                     -   php: 8.4
+                        laravel: 13.*
+                        testbench: 11.*
+                        pest: 4.*
+                    -   php: 8.4
                         laravel: 12.*
                         testbench: 10.*
+                        pest: 4.*
                     -   php: 8.3
                         laravel: 11.*
                         testbench: 9.*
+                        pest: 3.*
                     -   php: 8.2
                         laravel: 10.*
                         testbench: 8.*
+                        pest: 2.*
                     -   php: 8.1
                         laravel: 9.*
                         testbench: 7.*
+                        pest: 1.*
 
         name: ${{ matrix.os }} - P${{ matrix.php }} - L${{ matrix.laravel }}
 
@@ -69,7 +77,7 @@ jobs:
 
             -   name: Install dependencies
                 run: |
-                    composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update --dev
+                    composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest:${{ matrix.pest }}" "pestphp/pest-plugin-laravel:${{ matrix.pest }}" --no-interaction --no-update --dev
                     composer update --prefer-stable --prefer-dist --no-interaction
 
             -   name: Execute tests
