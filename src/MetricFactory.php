@@ -4,6 +4,9 @@ namespace DirectoryTree\Metrics;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Metric>
+ */
 class MetricFactory extends Factory
 {
     /**

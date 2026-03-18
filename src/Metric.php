@@ -12,7 +12,7 @@ class Metric extends Model
     /**
      * The attributes that aren't mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $guarded = [];
 
@@ -37,6 +37,8 @@ class Metric extends Model
 
     /**
      * Create a new Eloquent query builder for the model.
+     *
+     * @return MetricBuilder<static>
      */
     public function newEloquentBuilder($query): MetricBuilder
     {
