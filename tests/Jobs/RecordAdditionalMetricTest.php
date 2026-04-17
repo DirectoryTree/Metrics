@@ -36,8 +36,7 @@ it('creates metrics with json payload attributes', function () {
     (new RecordMetric($data))->handle();
 
     // Count may be 1 (SQLite dedupes by JSON string) or 2 (MySQL compares JSON differently).
-    $count = Metric::where('name', 'page_views_with_json')->count();
-    expect($count)->toBeGreaterThanOrEqual(1);
+    expect(Metric::where('name', 'page_views_with_json')->count())->toBeGreaterThanOrEqual(1);
 
     $metric = Metric::where('name', 'page_views_with_json')->first();
 
@@ -47,7 +46,7 @@ it('creates metrics with json payload attributes', function () {
     expect($metric->payload)->toBe(['a' => 1, 'b' => 'test']);
 
     // Total value across all matching records should equal 2 regardless of DB.
-    expect(Metric::where('name', 'page_views_with_json')->sum('value'))->toBe(2);
+    expect(Metric::where('name', 'page_views_with_json')->sum('value'))->toEqual(2);
 });
 
 it('differentiates metrics by json payload content', function () {
@@ -63,6 +62,5 @@ it('differentiates metrics by json payload content', function () {
     (new RecordMetric($data2))->handle();
 
     // Count may be 2 (SQLite) or more (MySQL) depending on JSON comparison behavior.
-    $metricsCount = Metric::where('name', 'page_views_by_source')->count();
-    expect($metricsCount)->toBeGreaterThanOrEqual(2);
+    expect(Metric::where('name', 'page_views_by_source')->count())->toBeGreaterThanOrEqual(2);
 });
