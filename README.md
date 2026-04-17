@@ -265,7 +265,7 @@ $requests = Metric::thisHour()
 ```
 
 > [!tip]
-> Use hourly metrics sparingly, as they create 24x more database rows than daily metrics. Reserve hourly tracking for metrics that genuinely benefit from hour-level granularity.
+> Use hourly metrics sparingly, as they create 24x more database rows than daily metrics. Reserve hourly tracking for metrics that genuinely benefit from hour-level granularity, or if you need the ability to query recorded metrics within a timezone.
 
 ### Recording for Models
 
