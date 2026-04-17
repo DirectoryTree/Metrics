@@ -273,3 +273,57 @@ it('cannot override core attributes with additional attributes', function () {
         ->and($recorded->measurable_id)->toBeNull()
         ->and($recorded->value)->toBe(1);
 });
+
+it('creates metrics with json payload attributes', function () {
+    Schema::table('metrics', function (Blueprint $table) {
+        $table->jsonb('payload')->default('{}');
+    });
+
+    $data = new MetricData('page_views', additional: [
+        'payload' => [
+            'a' => 1,
+            'b' => 'test',
+        ],
+    ]);
+
+    (new RecordMetric($data))->handle();
+    (new RecordMetric($data))->handle();
+
+    $metric = Metric::first();
+
+    // Cast the payload attribute manually since we added the column dynamically
+    $metric->mergeCasts(['payload' => 'array']);
+
+    expect($metric->payload)->toBe(['a' => 1, 'b' => 'test']);
+    expect($metric->value)->toBe(2);
+});
+
+it('differentiates metrics by json payload content', function () {
+    Schema::table('metrics', function (Blueprint $table) {
+        $table->jsonb('payload')->default('{}');
+    });
+
+    $data1 = new MetricData('page_views', additional: [
+        'payload' => ['source' => 'google'],
+    ]);
+
+    $data2 = new MetricData('page_views', additional: [
+        'payload' => ['source' => 'facebook'],
+    ]);
+
+    (new RecordMetric($data1))->handle();
+    (new RecordMetric($data1))->handle();
+    (new RecordMetric($data2))->handle();
+
+    expect(Metric::count())->toBe(2);
+
+    $google = Metric::where('payload->source', 'google')->first();
+    $facebook = Metric::where('payload->source', 'facebook')->first();
+
+    // Cast the payload attribute manually
+    $google->mergeCasts(['payload' => 'array']);
+    $facebook->mergeCasts(['payload' => 'array']);
+
+    expect($google->value)->toBe(2);
+    expect($facebook->value)->toBe(1);
+});
