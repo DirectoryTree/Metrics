@@ -66,23 +66,11 @@ class RecordMetric implements ShouldQueue
      */
     protected function getAdditionalAttributes(Measurable $metric, Model $model): array
     {
-        $attributes = [];
-
-        foreach ($metric->additional() as $key => $value) {
-            if ($model->hasCast($key)) {
-                // Model has a cast, let it handle the value.
-                $attributes[$key] = $value;
-            } elseif (is_array($value)) {
-                // Sort keys and JSON encode for consistent comparison.
-                ksort($value);
-
-                $attributes[$key] = json_encode($value);
-            } else {
-                // Scalar values pass through.
-                $attributes[$key] = $value;
-            }
-        }
-
-        return $attributes;
+        return Collection::make($metric->additional())->mapWithKeys(fn (mixed $value, mixed $key) => [
+            // If the model has a cast for the key, we can assume the model will
+            // handle the value correctly. If not, and the value is an array,
+            // we should encode it as JSON before attempting to store it.
+            $key => $model->hasCast($key) ? $value : (is_array($value) ? json_encode($value) : $value),
+        ])->all();
     }
 }
