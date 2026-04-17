@@ -6,7 +6,7 @@ use DirectoryTree\Metrics\MetricServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
-use function Orchestra\Testbench\laravel_migration_path;
+use function Orchestra\Testbench\default_migration_path;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadMigrationsFrom(laravel_migration_path('/'));
+        $this->loadMigrationsFrom(default_migration_path('/'));
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
