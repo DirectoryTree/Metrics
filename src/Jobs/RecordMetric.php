@@ -7,6 +7,7 @@ use DirectoryTree\Metrics\Measurable;
 use DirectoryTree\Metrics\Metric;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Collection;
 
@@ -38,12 +39,12 @@ class RecordMetric implements ShouldQueue
             fn (Measurable $metric) => $metric->value()
         );
 
-        /** @var \Illuminate\Database\Eloquent\Model $model */
+        /** @var Model $model */
         $model = transform($metric->model() ?? DatabaseMetricManager::$model, fn (string $model) => new $model);
 
         $model->getConnection()->transaction(function () use ($metric, $value, $model) {
             $instance = $model->newQuery()->firstOrCreate([
-                ...$metric->additional(),
+                ...$this->getAdditionalAttributes($metric, $model),
                 'name' => $metric->name(),
                 'category' => $metric->category(),
                 'year' => $metric->year(),
@@ -58,5 +59,18 @@ class RecordMetric implements ShouldQueue
                 ->whereKey($instance)
                 ->increment('value', $value);
         });
+    }
+
+    /**
+     * Get the additional attributes for the metric.
+     */
+    protected function getAdditionalAttributes(Measurable $metric, Model $model): array
+    {
+        return Collection::make($metric->additional())->mapWithKeys(fn (mixed $value, mixed $key) => [
+            // If the model has a cast for the key, we can assume the model will
+            // handle the value correctly. If not, and the value is an array,
+            // we should encode it as JSON before attempting to store it.
+            $key => $model->hasCast($key) ? $value : (is_array($value) ? json_encode($value) : $value),
+        ])->all();
     }
 }
