@@ -3,12 +3,15 @@
 namespace DirectoryTree\Metrics\Tests;
 
 use DirectoryTree\Metrics\MetricServiceProvider;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 use function Orchestra\Testbench\laravel_migration_path;
 
 abstract class TestCase extends BaseTestCase
 {
+    use RefreshDatabase;
+
     /**
      * Define database migrations.
      */
