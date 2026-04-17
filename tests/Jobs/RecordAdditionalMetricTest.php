@@ -7,6 +7,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
+    Metric::truncate();
+
     if (! Schema::hasColumn('metrics', 'payload')) {
         Schema::table('metrics', function (Blueprint $table) {
             $table->json('payload');
@@ -32,6 +34,10 @@ it('creates metrics with json payload attributes', function () {
 
     (new RecordMetric($data))->handle();
     (new RecordMetric($data))->handle();
+
+    $count = Metric::where('name', 'page_views_with_json')->count();
+
+    expect($count)->toBe(1, 'Should create only one metric record');
 
     $metric = Metric::where('name', 'page_views_with_json')->first();
 
