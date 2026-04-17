@@ -276,7 +276,7 @@ it('cannot override core attributes with additional attributes', function () {
 
 it('creates metrics with json payload attributes', function () {
     Schema::table('metrics', function (Blueprint $table) {
-        $table->json('payload')->default('{}');
+        $table->json('payload');
     });
 
     $data = new MetricData('page_views', additional: [
@@ -300,7 +300,7 @@ it('creates metrics with json payload attributes', function () {
 
 it('differentiates metrics by json payload content', function () {
     Schema::table('metrics', function (Blueprint $table) {
-        $table->json('payload')->default('{}');
+        $table->json('payload');
     });
 
     $data1 = new MetricData('page_views', additional: [
