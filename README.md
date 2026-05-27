@@ -408,7 +408,10 @@ Or with the `PendingMetric` class:
 use DirectoryTree\Metrics\PendingMetric;
 
 PendingMetric::make('page:views')
-    ->with(['source' => 'google', 'country' => 'US'])
+    ->with([
+        'source' => 'google',
+        'country' => 'US'
+    ])
     ->record();
 ```
 
