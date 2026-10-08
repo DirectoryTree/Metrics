@@ -1,16 +1,24 @@
 <p align="center">
-<img src="https://github.com/DirectoryTree/Metrics/blob/master/art/logo.svg" width="250">
+    <img src="https://github.com/DirectoryTree/Metrics/blob/master/art/logo.svg" width="300" alt="Metrics">
+</p>
+
+<p align="center">A simple and elegant way to record metrics in your Laravel application.</p>
+
+<p align="center">
+    <a href="https://github.com/DirectoryTree/Metrics/actions/workflows/run-tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/DirectoryTree/Metrics/run-tests.yml?branch=master&amp;style=flat-square" alt="Tests"></a>
+    <a href="https://packagist.org/packages/directorytree/metrics"><img src="https://img.shields.io/packagist/dt/directorytree/metrics.svg?style=flat-square" alt="Total Downloads"></a>
+    <a href="https://packagist.org/packages/directorytree/metrics"><img src="https://img.shields.io/packagist/v/directorytree/metrics.svg?style=flat-square" alt="Latest Version"></a>
+    <a href="https://github.com/DirectoryTree/Metrics/blob/master/LICENSE"><img src="https://img.shields.io/github/license/DirectoryTree/Metrics?style=flat-square" alt="License"></a>
 </p>
 
 <p align="center">
-A simple and elegant way to record metrics in your Laravel application.
-</p>
-
-<p align="center">
-<a href="https://github.com/directorytree/metrics/actions" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/directorytree/metrics/run-tests.yml?branch=master&style=flat-square"/></a>
-<a href="https://packagist.org/packages/directorytree/metrics" target="_blank"><img src="https://img.shields.io/packagist/v/directorytree/metrics.svg?style=flat-square"/></a>
-<a href="https://packagist.org/packages/directorytree/metrics" target="_blank"><img src="https://img.shields.io/packagist/dt/directorytree/metrics.svg?style=flat-square"/></a>
-<a href="https://packagist.org/packages/directorytree/metrics" target="_blank"><img src="https://img.shields.io/packagist/l/directorytree/metrics.svg?style=flat-square"/></a>
+    <a href="#contents">Contents</a>
+    <span> · </span>
+    <a href="#installation">Installation</a>
+    <span> · </span>
+    <a href="#usage">Usage</a>
+    <span> · </span>
+    <a href="#testing">Testing</a>
 </p>
 
 ---
@@ -19,7 +27,7 @@ Metrics provides a simple, elegant way to record and query metrics in your Larav
 
 Track page views, API calls, user signups, or any other countable events.
 
-## Index
+## Contents
 
 - [Requirements](#requirements)
 - [Installation](#installation)
